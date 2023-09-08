@@ -3,6 +3,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import re
+import pickle
+from subprocess import run
 
 
 
@@ -284,30 +286,40 @@ def Remove_Complex_Features(df):
 
 
 def PDFid_Log_File_Parser(file):
+    contents = []
     try:
-        with open(file, 'r') as f:
-            contents = f.readlines()
+        if(os.path.exists(file)):
+            with open(file, 'r') as f:
+                contents = f.readlines()
+        else:
+            print(f"ERRRRROR in Parsing the log file {file}: FILE NOT FOUND")
+            return -1
     except:
         print(f"ERRRRROR in Parsing the log file {file}")
         return -1
 
+    #discard the last blank line
+    contents.pop()
+    
+    
+
     # delete the first line
-    contents = contents[1:]
+    contents.pop(0)
 
     output_dictionary = {}
 
     # From the first line containing "PDF header" we will extract its value directly so as not to cause any troubles in the future
     try:
         output_dictionary['header'] = re.findall( "%PDF\-\d\.\d", contents[0])[0]
-        contents = contents[1:] #remove this line after we took what we need from it
+        contents.pop(0) #remove this line after we took what we need from it
     except:
         print(f"ERRRRROR in Parsing the log file {file}\nThe First line which contains the PDF header is corrupt: {contents[0]}")
         return -1
     
     # From the last line, we want to read the Colors field without causing any troubles in the future
     try:
-        output_dictionary['Colors'] = re.findall( "\d+$", contents[-1])[0]
-        contents = contents[:-1] #remove this last line after we took what we need from it
+        output_dictionary['Colors'] = re.findall( "\s\s\s\s+(\d+)", contents[-1])[0]
+        contents.pop() #remove this last line after we took what we need from it
     except:
         print(f"ERRRRROR in Parsing the log file {file}\nThe Last line which contains Colors field is corrupt: {contents[-1]}")
         return -1
@@ -315,12 +327,89 @@ def PDFid_Log_File_Parser(file):
 
     # Now parse the rest of the fields normally
     for line in contents:
-        lin_cpy = line.copy()
-        matches = re.findall("[^ ]", lin_cpy)
+        lin_cpy = line
+        matches = re.findall("\w+", lin_cpy)
         if(len(matches) == 2):
             output_dictionary[matches[0]] = matches[1]
         else:
-            print(f"ERRRRROR in Parsing the log file {file}\nMultiple matches in regex in the same line, required to exactly have 2 elements")
+            print(f"ERRRRROR in Parsing the log file {file}\nMultiple matches in regex in the same line, required to exactly have 2 elements\n the line: {line}\n matches: {matches}")
             return -1
     
-    return output_dictionary
+
+    #Renaming the keys
+    output_dictionary['pages'] = output_dictionary['Page']
+    del output_dictionary["Page"]
+    output_dictionary['encrypt'] = output_dictionary['Encrypt']
+    del output_dictionary["Encrypt"]
+    output_dictionary['Acroform'] = output_dictionary['AcroForm']
+    del output_dictionary["AcroForm"]
+    output_dictionary['launch'] = output_dictionary['Launch']
+    del output_dictionary["Launch"]
+    output_dictionary['Javascript'] = output_dictionary['JavaScript']
+    del output_dictionary["JavaScript"]
+
+    # Deleting the URI field becuase we didn't train on it (We Don't have URI field in our dataset)
+    del output_dictionary["URI"]
+
+
+    # Fix the header entry
+    if output_dictionary['header'] != -1 or output_dictionary['header'] != '-1':
+        output_dictionary['PDF_Version'] = re.findall('\d\.\d', output_dictionary['header'])[0]
+        output_dictionary['header_regex_boolean'] = True
+    
+    else:
+        output_dictionary['PDF_Version'] = -1.0
+        output_dictionary['header_regex_boolean'] = False
+    
+    del(output_dictionary['header'])
+
+
+    # Finally, construct the dataframe and return it
+    output_df = pd.DataFrame.from_dict(output_dictionary, orient='index').transpose()
+
+    # for my OCD...
+    output_df['PDF_Version'] = output_df['PDF_Version'].astype(float)
+    output_df['header_regex_boolean'] = output_df['header_regex_boolean'].astype(bool)
+
+    return output_df
+
+
+
+
+
+def Extract_Features(file_path, path_to_script_folder):
+    TARGET_PDF_PATH = file_path
+
+    PATH_TO_PDFID_SCRIPT = os.path.join(path_to_script_folder, 'pdfid.py')
+
+    LOCAL_PATH = os.getcwd()
+
+    OUTPUT_LOG_FILE_PATH = os.path.join(LOCAL_PATH, 'feature_output.txt')
+
+
+    if(os.path.exists(OUTPUT_LOG_FILE_PATH)):
+        os.remove(OUTPUT_LOG_FILE_PATH)
+
+    run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH])
+
+    output_df = PDFid_Log_File_Parser(OUTPUT_LOG_FILE_PATH)
+    if(type(output_df) == int):
+        exit()
+    return output_df
+
+
+def reorder_df (input_df, ordered_df, ready_columns=False):
+    if(ready_columns):
+        return input_df.reindex(columns=ready_columns)
+    else:    
+        feature_columns = list(ordered_df.columns)
+        if(feature_columns.contains("Class")):
+            feature_columns.pop(feature_columns.index("Class"))
+        return input_df.reindex(columns=ordered_df[feature_columns].columns)    
+
+def test_on_file(feature_df, model_file_path):
+    with open(model_file_path, 'rb') as f:
+        model = pickle.load(f)
+    Pred = model.predict(feature_df)
+    print(Pred)
+    return Pred
