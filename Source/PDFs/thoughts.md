@@ -92,3 +92,6 @@
 ### I will use PDFid from Dividier Stevens (this man is just awesome)
 ### I implemented a simple log file parser to extract the features.
 ### I will try now to only use those features and drop the other features because right now, I don't have a plan to extract them manually
+
+# Tried RF, got 99%
+# Will deliver this model, I will not burn myself tryna get this 1%

@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import re
 import pickle
-from subprocess import run
+from subprocess import run, DEVNULL, STDOUT
 
 
 
@@ -310,24 +310,31 @@ def PDFid_Log_File_Parser(file):
 
     # From the first line containing "PDF header" we will extract its value directly so as not to cause any troubles in the future
     try:
-        output_dictionary['header'] = re.findall( "%PDF\-\d\.\d", contents[0])[0]
+        output_dictionary['header'] = re.findall( "%PDF\-\d\.\d?", contents[0])[0]
         contents.pop(0) #remove this line after we took what we need from it
     except:
         print(f"ERRRRROR in Parsing the log file {file}\nThe First line which contains the PDF header is corrupt: {contents[0]}")
-        return -1
+        Check_Corrupted_File (file, '', 1, contents[0])
+        output_dictionary['header'] = -1
+        contents.pop(0) #remove this line after we took what we need from it
+        #return -1
     
     # From the last line, we want to read the Colors field without causing any troubles in the future
     try:
         output_dictionary['Colors'] = re.findall( "\s\s\s\s+(\d+)", contents[-1])[0]
         contents.pop() #remove this last line after we took what we need from it
     except:
-        print(f"ERRRRROR in Parsing the log file {file}\nThe Last line which contains Colors field is corrupt: {contents[-1]}")
+        print(f"ERRRRROR in Parsing the log file {file}\nThe Last line which contains Colors field is corrupt: {contents}")
+        if(contents ==[]):
+            Check_Corrupted_File (file, '', 2, '')
         return -1
     
 
     # Now parse the rest of the fields normally
     for line in contents:
         lin_cpy = line
+        if(re.findall("\(.*\)", lin_cpy)):
+            lin_cpy = re.sub('\(.*\)', '', lin_cpy)
         matches = re.findall("\w+", lin_cpy)
         if(len(matches) == 2):
             output_dictionary[matches[0]] = matches[1]
@@ -353,11 +360,15 @@ def PDFid_Log_File_Parser(file):
 
 
     # Fix the header entry
-    if output_dictionary['header'] != -1 or output_dictionary['header'] != '-1':
-        output_dictionary['PDF_Version'] = re.findall('\d\.\d', output_dictionary['header'])[0]
-        output_dictionary['header_regex_boolean'] = True
-    
-    else:
+    try:
+        if output_dictionary['header'] != -1 or output_dictionary['header'] != '-1':
+            output_dictionary['PDF_Version'] = re.findall('\d\.\d?', output_dictionary['header'])[0]
+            output_dictionary['header_regex_boolean'] = True
+        
+        else:
+            output_dictionary['PDF_Version'] = -1.0
+            output_dictionary['header_regex_boolean'] = False
+    except:
         output_dictionary['PDF_Version'] = -1.0
         output_dictionary['header_regex_boolean'] = False
     
@@ -390,11 +401,14 @@ def Extract_Features(file_path, path_to_script_folder):
     if(os.path.exists(OUTPUT_LOG_FILE_PATH)):
         os.remove(OUTPUT_LOG_FILE_PATH)
 
-    run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH])
+    run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH])#, stdout=DEVNULL, stderr=STDOUT)
 
     output_df = PDFid_Log_File_Parser(OUTPUT_LOG_FILE_PATH)
     if(type(output_df) == int):
-        exit()
+        print(f"Error During File Parsing: {file_path} : File might be a malware, or is not a PDF aslan!!")
+        os.remove(OUTPUT_LOG_FILE_PATH)
+        return 1
+    os.remove(OUTPUT_LOG_FILE_PATH)
     return output_df
 
 
@@ -413,3 +427,21 @@ def test_on_file(feature_df, model_file_path):
     Pred = model.predict(feature_df)
     print(Pred)
     return Pred
+
+
+
+def Check_Corrupted_File(file_path, path_to_script_folder, error_code, line):
+    if(error_code == 1):
+        print(f"\n PDF Header and version are corrupted")
+        if re.findall("%PDF", line):
+            print(f"\n I say it is malware")
+            return 1
+        else:
+            print(f"\n It is not a PDF aslan ya ba4a !!")
+            return 0
+    
+    elif(error_code == 2):
+        print(f"File is empty, I couldn't extract any info from inside")
+        return 1
+    
+
