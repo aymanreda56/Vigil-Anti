@@ -550,16 +550,56 @@ class PEFeatureExtractor(object):
                        RuntimeError)
         try:
             lief_binary = lief.PE.parse(list(bytez))
-        except lief_errors as e:
+        except lief.lief_errors.build_error as e:
             print("lief error: ", str(e))
             lief_binary = None
+            return -1
+        except lief.lief_errors.conversion_error as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.corrupted as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.data_too_large as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.file_error as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.file_format_error as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.not_found as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.not_implemented as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.not_supported as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
+        except lief.lief_errors.parsing_error as e:
+            print("lief error: ", str(e))
+            lief_binary = None
+            return -1
         except Exception as e:  # everything else (KeyboardInterrupt, SystemExit, ValueError):
             print(f"Slight error inside PE parsing: {e}")
+            return -1
         except:
-            pass
+            return -1
 
         features = {"sha256": hashlib.sha256(bytez).hexdigest()}
         features.update({fe.name: fe.raw_features(bytez, lief_binary) for fe in self.features})
+        if(len(features.keys()) < 5):
+            return -1
         return features
 
     def process_raw_features(self, raw_obj):

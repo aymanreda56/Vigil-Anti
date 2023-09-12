@@ -11,7 +11,7 @@ import random
 
 with open(os.path.join(os.getcwd(),'models',"secret.pkl"), 'rb') as f:
     Ascii_ARTS = pickle.load(f)
-magic_number = random.randint(0, len(Ascii_ARTS))
+magic_number = random.randint(0, len(Ascii_ARTS)-1)
 
 class color:
     PURPLE = '\033[95m'

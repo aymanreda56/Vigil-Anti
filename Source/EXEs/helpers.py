@@ -40,6 +40,13 @@ Header_Fields = [
 ]
 
 
+def printo(file_path,str_to_write):
+    if(os.path.isfile(file_path)):
+        with open(file_path, 'a') as f:
+            f.write(str(str_to_write))
+    print(str_to_write)
+    
+
 def RemoveBlankLines_From_dictionary(input_dict:dict):
     for k,v in input_dict.items():
         newValue = []
@@ -53,7 +60,7 @@ def RemoveBlankLines_From_dictionary(input_dict:dict):
 
 
 
-def Parse_Lief_Binary_to_Dict (binary_file, Verbose_Output=False):
+def Parse_Lief_Binary_to_Dict (binary_file, Verbose_Output=False, outfile=''):
 
     AllHeaders=[]
 
@@ -86,11 +93,11 @@ def Parse_Lief_Binary_to_Dict (binary_file, Verbose_Output=False):
             arrOfValues = re.split(":", line)
             try:
                 if(len(arrOfValues) > 2):
-                    if(Verbose_Output): print(f"THERE IS AN ERROR:      {arrOfValues} IN:     {header}")
+                    if(Verbose_Output): printo(outfile, f"THERE IS AN ERROR:      {arrOfValues} IN:     {header}")
                 else:
                     smallDict[arrOfValues[0]] = arrOfValues[1]
             except:
-                if(Verbose_Output): print(f"ERRRORRRR:     {line} IN:        {header}")
+                if(Verbose_Output): printo(outfile, f"ERRRORRRR:     {line} IN:        {header}")
         
         Dictionaries_Of_All_Fields[header] = smallDict
         if(Verbose_Output): pprint(Dictionaries_Of_All_Fields)
@@ -107,7 +114,7 @@ def Parse_Lief_Binary_to_Dict (binary_file, Verbose_Output=False):
 
 
 
-def Interpret_Histogram(list_of_bytes:list, additional_name):
+def Interpret_Histogram(list_of_bytes:list, additional_name, outfile=''):
     try:
         zero_bytes = list_of_bytes[0]
         full_bytes = list_of_bytes[-1]
@@ -120,13 +127,13 @@ def Interpret_Histogram(list_of_bytes:list, additional_name):
 
         return_dict = {f'zero_bytes_{additional_name}': zero_bytes, f'full_bytes_{additional_name}': full_bytes, f'mean_of_bytes_{additional_name}': mean_of_bytes, f'standard_dev_{additional_name}': standard_dev, f'total_bytes_{additional_name}': total_bytes, f'mean_of_first_tertile_{additional_name}': mean_of_first_tertile, f'mean_of_second_tertile_{additional_name}': mean_of_second_tertile, f'mean_of_third_tertile_{additional_name}': mean_of_third_tertile}
     except:
-        print(f"Error inside Interpret_Histogram()")
+        printo(outfile, f"Error inside Interpret_Histogram()")
     return return_dict
 
-def extract_subfields_from_fields(dic, name_of_field, normalize_names=False,delete_field= False):
+def extract_subfields_from_fields(dic, name_of_field, normalize_names=False,delete_field= False, outfile=''):
     try:
         if(type(dic[name_of_field]) != dict):
-            print(f"the value of the input field in the passed dictionary, is not a dictionary")
+            printo(outfile, f"the value of the input field in the passed dictionary, is not a dictionary")
         for k,v in dic[name_of_field].items():
             if(normalize_names):
                 new_field_name = f"{name_of_field}_{k}"
@@ -136,13 +143,13 @@ def extract_subfields_from_fields(dic, name_of_field, normalize_names=False,dele
         if(delete_field):
             del dic[name_of_field]
     except:
-        print(f"Error inside extract_subfields_from_fields()")
+        printo(outfile, f"Error inside extract_subfields_from_fields()")
 
     return dic
 
 
 
-def handle_data_directories_field(dic:dict):
+def handle_data_directories_field(dic:dict, outfile=''):
     try:
         list_of_dicts = dic["datadirectories"]
         for d in list_of_dicts:
@@ -154,11 +161,11 @@ def handle_data_directories_field(dic:dict):
         
         del dic['datadirectories']
     except:
-        print(f"Error inside handle_data_directories_field()")
+        printo(outfile, f"Error inside handle_data_directories_field()")
     return dic
 
 
-def handle_section_names (ds_obj: dict, Common_section_names, delete_field = False):
+def handle_section_names (ds_obj: dict, Common_section_names, delete_field = False, outfile=''):
     try:
         new_small_dic = {}
         for dic_elm in ds_obj['section']['sections']:
@@ -175,11 +182,11 @@ def handle_section_names (ds_obj: dict, Common_section_names, delete_field = Fal
         if(delete_field):
             del ds_obj['section']
     except:
-        print(f"Error inside handle_section_names()")
+        printo(outfile, f"Error inside handle_section_names()")
     return ds_obj
 
 
-def handle_DLL_imports (dic:dict, delete_field=False):
+def handle_DLL_imports (dic:dict, delete_field=False, outfile=''):
     try:
         with open(os.path.join(os.getcwd(), 'assets', 'suspicious_imports.txt'), 'r') as f:
             suspicious_DLL_list = f.readlines()
@@ -206,11 +213,11 @@ def handle_DLL_imports (dic:dict, delete_field=False):
         if(delete_field):
             del dic['imports']
     except:
-        print(f"Error inside handle_DLL_imports()")
+        printo(outfile, f"Error inside handle_DLL_imports()")
     return dic
 
 
-def flatten_strings_printable_distribution(dic:dict, delete_field=False):
+def flatten_strings_printable_distribution(dic:dict, delete_field=False, outfile=''):
     try:
         distribution = dic['strings_printabledist']
         for i, val in enumerate(distribution):
@@ -219,11 +226,11 @@ def flatten_strings_printable_distribution(dic:dict, delete_field=False):
         if(delete_field):
             del dic['strings_printabledist']
     except:
-        print(f"Error inside flatten_strings_printable_distribution()")
+        printo(outfile, f"Error inside flatten_strings_printable_distribution()")
     return dic
 
 
-def reorder_df (input_df, ordered_df, ready_columns=False, fill_value=np.nan):
+def reorder_df (input_df, ordered_df, ready_columns=False, fill_value=np.nan, outfile=''):
     if(ready_columns):
         return input_df.reindex(columns=ready_columns, fill_value=fill_value)
     else:    
@@ -233,7 +240,7 @@ def reorder_df (input_df, ordered_df, ready_columns=False, fill_value=np.nan):
         return input_df.reindex(columns=ordered_df[feature_columns].columns, fill_value=fill_value)
 
 
-def Preprocess_Features_into_dataframe(Feature_Dict):
+def Preprocess_Features_into_dataframe(Feature_Dict, verbose=False, outfile=''):
     try:
 
         # Read the most common section names
@@ -243,36 +250,52 @@ def Preprocess_Features_into_dataframe(Feature_Dict):
 
 
         # add reduced features of byteentropy distribution
-        Feature_Dict.update(Interpret_Histogram(Feature_Dict['byteentropy'], 'byteentropy'))
+        Feature_Dict.update(Interpret_Histogram(Feature_Dict['byteentropy'], 'byteentropy', outfile=outfile))
+        if(verbose):
+            printo(outfile, '[+] byte entropy has been generated')
 
         # add reduced features of byte histogram distribution
-        Feature_Dict.update(Interpret_Histogram(Feature_Dict['histogram'], 'bytehistogram'))
+        Feature_Dict.update(Interpret_Histogram(Feature_Dict['histogram'], 'bytehistogram', outfile=outfile))
+        if(verbose):
+            printo(outfile, '[+] byte histogram has been generated')
 
         # reduce strings field
-        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'strings', normalize_names=True, delete_field=True)
+        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'strings', normalize_names=True, delete_field=True, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] All static strings have been extracted and analyzed')
 
         # flatten the strings printables distribution field
-        Feature_Dict = flatten_strings_printable_distribution(Feature_Dict, delete_field=True)
+        Feature_Dict = flatten_strings_printable_distribution(Feature_Dict, delete_field=True, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] Constructing a Distribution for printable static strings')
 
         # reduce general field
-        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'general', normalize_names=True, delete_field=True)
+        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'general', normalize_names=True, delete_field=True, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] Other general info of the file')
 
         # reduce header field
-        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header', normalize_names=True, delete_field=True)
-        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header_optional', normalize_names=False, delete_field=True)
-        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header_coff', normalize_names=False, delete_field=True)
+        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header', normalize_names=True, delete_field=True, outfile=outfile)
+        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header_optional', normalize_names=False, delete_field=True, outfile=outfile)
+        Feature_Dict = extract_subfields_from_fields(Feature_Dict, 'header_coff', normalize_names=False, delete_field=True, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] File header parsed')
 
 
         # handle data directories field
-        Feature_Dict = handle_data_directories_field(Feature_Dict)
+        Feature_Dict = handle_data_directories_field(Feature_Dict, outfile=outfile)
 
 
         # handle sections fields
-        Feature_Dict = handle_section_names(Feature_Dict, Common_section_names, delete_field=True)
+        Feature_Dict = handle_section_names(Feature_Dict, Common_section_names, delete_field=True, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] Section names analyzed')
 
         # handle imports fields
-        Feature_Dict = handle_DLL_imports(Feature_Dict, delete_field=False)
-
+        Feature_Dict = handle_DLL_imports(Feature_Dict, delete_field=False, outfile=outfile)
+        if(verbose):
+            printo(outfile, '[+] DLLs imports analyzed')
+            
         # Remove the useless columns for now (they are not entirely useless but they will make the training process very complex for me :(( )
         useless_columns = ['sha256'
             ,'md5'
@@ -289,7 +312,7 @@ def Preprocess_Features_into_dataframe(Feature_Dict):
             del Feature_Dict[useless_col]
         
     except:
-        print(f"bruh")
+        printo(outfile, f"bruh")
 
 
 
@@ -304,7 +327,7 @@ def Preprocess_Features_into_dataframe(Feature_Dict):
     with open(os.path.join(os.getcwd(), 'assets', 'features.pkl'), 'rb') as f:
         feature_columns = pickle.load(f)
     
-    df = reorder_df (df, pd.DataFrame(), feature_columns)
+    df = reorder_df (df, pd.DataFrame(), feature_columns, outfile=outfile)
     
     df.fillna(0, inplace=True)
     
@@ -340,24 +363,26 @@ def Preprocess_Features_into_dataframe(Feature_Dict):
         try:
             df_train_1[col] = array_of_Label_Encoders[i].transform(df_train_1[col])
         except:
-            print(f"ERROR during Label encoder, column {col} with value {df_train_1[col]}")
+            printo(outfile, f"ERROR during Label encoder, column {col} with value {df_train_1[col]}")
     
 
-    df_train_1 = reorder_df (df_train_1, pd.DataFrame(), feature_columns)
+    df_train_1 = reorder_df (df_train_1, pd.DataFrame(), feature_columns, outfile=outfile)
 
 
     for col in feature_columns:
         if(col not in df.columns):
             df.drop(col, axis=1, inplace=True)
-
+    if(verbose):
+            printo(outfile, '[+] Finishing analysis process...')
     return df_train_1
 
 
 
 
 
-def Inference(df_train, model_path):
-
+def Inference(df_train, model_path, verbose=False, outfile=''):
+    if(verbose):
+            printo(outfile, '[*] Model is doing smth')
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
     
