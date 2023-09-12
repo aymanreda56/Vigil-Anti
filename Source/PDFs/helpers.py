@@ -5,8 +5,14 @@ import matplotlib.pyplot as plt
 import re
 import pickle
 from subprocess import run, DEVNULL, STDOUT
+current_directory = os.path.split(os.path.realpath(__file__))[0]
 
 
+def printo(file_path,str_to_write):
+    if(os.path.isfile(file_path)):
+        with open(file_path, 'a') as f:
+            f.write(str(str_to_write))
+    print(str_to_write)
 
 
 def prettyPrint_DF (df):
@@ -24,7 +30,7 @@ def prettyPrint_DF (df):
 
 
 
-def Cleanse_DataFrame(df):
+def Cleanse_DataFrame(df, outfile=''):
     df.dropna(inplace=True)
 
 
@@ -285,17 +291,17 @@ def Remove_Complex_Features(df):
 
 
 
-def PDFid_Log_File_Parser(file):
+def PDFid_Log_File_Parser(file, outfile=''):
     contents = []
     try:
         if(os.path.exists(file)):
             with open(file, 'r') as f:
                 contents = f.readlines()
         else:
-            print(f"ERRRRROR in Parsing the log file {file}: FILE NOT FOUND")
+            printo(outfile, f"ERRRRROR in Parsing the log file {file}: FILE NOT FOUND")
             return -1
     except:
-        print(f"ERRRRROR in Parsing the log file {file}")
+        printo(outfile, f"ERRRRROR in Parsing the log file {file}")
         return -1
 
     #discard the last blank line
@@ -313,8 +319,8 @@ def PDFid_Log_File_Parser(file):
         output_dictionary['header'] = re.findall( "%PDF\-\d\.\d?", contents[0])[0]
         contents.pop(0) #remove this line after we took what we need from it
     except:
-        print(f"ERRRRROR in Parsing the log file {file}\nThe First line which contains the PDF header is corrupt: {contents[0]}")
-        Check_Corrupted_File (file, '', 1, contents[0])
+        printo(outfile, f"ERRRRROR in Parsing the log file {file}\nThe First line which contains the PDF header is corrupt: {contents[0]}")
+        Check_Corrupted_File (file, '', 1, contents[0], outfile=outfile)
         output_dictionary['header'] = -1
         contents.pop(0) #remove this line after we took what we need from it
         #return -1
@@ -324,9 +330,9 @@ def PDFid_Log_File_Parser(file):
         output_dictionary['Colors'] = re.findall( "\s\s\s\s+(\d+)", contents[-1])[0]
         contents.pop() #remove this last line after we took what we need from it
     except:
-        print(f"ERRRRROR in Parsing the log file {file}\nThe Last line which contains Colors field is corrupt: {contents}")
+        printo(outfile, f"ERRRRROR in Parsing the log file {file}\nThe Last line which contains Colors field is corrupt: {contents}")
         if(contents ==[]):
-            Check_Corrupted_File (file, '', 2, '')
+            Check_Corrupted_File (file, '', 2, '', outfile=outfile)
         return -1
     
 
@@ -339,7 +345,7 @@ def PDFid_Log_File_Parser(file):
         if(len(matches) == 2):
             output_dictionary[matches[0]] = matches[1]
         else:
-            print(f"ERRRRROR in Parsing the log file {file}\nMultiple matches in regex in the same line, required to exactly have 2 elements\n the line: {line}\n matches: {matches}")
+            printo(outfile, f"ERRRRROR in Parsing the log file {file}\nMultiple matches in regex in the same line, required to exactly have 2 elements\n the line: {line}\n matches: {matches}")
             return -1
     
 
@@ -388,12 +394,12 @@ def PDFid_Log_File_Parser(file):
 
 
 
-def Extract_Features(file_path, path_to_script_folder):
+def Extract_Features(file_path, path_to_script_folder, outfile='', verbose=False):
     TARGET_PDF_PATH = file_path
 
     PATH_TO_PDFID_SCRIPT = os.path.join(path_to_script_folder, 'pdfid.py')
 
-    LOCAL_PATH = os.getcwd()
+    LOCAL_PATH = current_directory
 
     OUTPUT_LOG_FILE_PATH = os.path.join(LOCAL_PATH, 'feature_output.txt')
 
@@ -401,11 +407,16 @@ def Extract_Features(file_path, path_to_script_folder):
     if(os.path.exists(OUTPUT_LOG_FILE_PATH)):
         os.remove(OUTPUT_LOG_FILE_PATH)
 
-    run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH])#, stdout=DEVNULL, stderr=STDOUT)
+    if(verbose):
+        run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH])#, stdout=DEVNULL, stderr=STDOUT)
+    else:
+        run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', OUTPUT_LOG_FILE_PATH], stdout=DEVNULL, stderr=STDOUT)
+    if(outfile != ''):
+        run(['python', PATH_TO_PDFID_SCRIPT, TARGET_PDF_PATH, '-o', outfile], stdout=DEVNULL, stderr=STDOUT)
 
-    output_df = PDFid_Log_File_Parser(OUTPUT_LOG_FILE_PATH)
+    output_df = PDFid_Log_File_Parser(OUTPUT_LOG_FILE_PATH, outfile=outfile)
     if(type(output_df) == int):
-        print(f"Error During File Parsing: {file_path} : File might be a malware, or is not a PDF aslan!!")
+        printo(outfile, f"Error During File Parsing: {file_path} : File might be a malware, or is not a PDF aslan!!")
         os.remove(OUTPUT_LOG_FILE_PATH)
         return 1
     os.remove(OUTPUT_LOG_FILE_PATH)
@@ -421,27 +432,27 @@ def reorder_df (input_df, ordered_df, ready_columns=False):
             feature_columns.pop(feature_columns.index("Class"))
         return input_df.reindex(columns=ordered_df[feature_columns].columns)    
 
-def test_on_file(feature_df, model_file_path):
+def test_on_file(feature_df, model_file_path, outfile=''):
     with open(model_file_path, 'rb') as f:
         model = pickle.load(f)
     Pred = model.predict(feature_df)
-    print(Pred)
+    printo(outfile, Pred)
     return Pred
 
 
 
-def Check_Corrupted_File(file_path, path_to_script_folder, error_code, line):
+def Check_Corrupted_File(file_path, path_to_script_folder, error_code, line, outfile=''):
     if(error_code == 1):
-        print(f"\n PDF Header and version are corrupted")
+        printo(outfile, f"\n PDF Header and version are corrupted")
         if re.findall("%PDF", line):
-            print(f"\n I say it is malware")
+            printo(outfile, f"\n I say it is malware")
             return 1
         else:
-            print(f"\n It is not a PDF aslan ya ba4a !!")
+            printo(outfile, f"\n It is not a PDF aslan ya ba4a !!")
             return 0
     
     elif(error_code == 2):
-        print(f"File is empty, I couldn't extract any info from inside")
+        printo(outfile, f"File is empty, I couldn't extract any info from inside")
         return 1
     
 

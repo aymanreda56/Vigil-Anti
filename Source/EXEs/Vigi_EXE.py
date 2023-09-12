@@ -10,6 +10,7 @@ from exiftool import ExifToolHelper
 from random import randint
 from argparse import ArgumentParser, Namespace
 import glob, pathlib
+current_directory = os.path.split(os.path.realpath(__file__))[0]
 
 parser = ArgumentParser()
 group = parser.add_mutually_exclusive_group()
@@ -80,7 +81,7 @@ options:
 
 
 in_file_Path = args.file_path
-models_path = os.path.join(os.getcwd(),'models')
+models_path = os.path.join(current_directory,'models')
 if(args.model == 'RF'):
      model_path = os.path.join(models_path, 'rf.pkl')
 elif(args.model == 'SVM'):
@@ -101,7 +102,7 @@ elif(args.model == 'NN5'):
      model_path = os.path.join(models_path, 'NN5.pkl')
 
 if(not (args.no_ascii_art or args.quiet)):
-    with open (os.path.join(os.getcwd(), 'models', 'secret.pkl'), 'rb') as f:
+    with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
         ascii_art = pickle.load(f)
 
     helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
@@ -131,18 +132,19 @@ def Scan_File(file_path, model_path):
      with ExifToolHelper() as et:
           try:
                metadata = et.get_metadata(file_path)
+               for i, d in enumerate(metadata):
+                    if 'File:FileType' in d.keys():
+                         fileTypeDict = d
+               if(not (re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE))):
+                    if(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
+                         helpers.printo(outfile, f"File is a PDF, please use our other tool Vigi_PDF.py")
+                         return -1
+                    helpers.printo(outfile, f"File is not a windows PE !!")
+                    return -1
           except:
                helpers.printo(outfile, f"File {file_path} not Parseable")
                return -1
-     for i, d in enumerate(metadata):
-          if 'File:FileType' in d.keys():
-               fileTypeDict = d
-     if(not (re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE))):
-          if(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
-               helpers.printo(outfile, f"File is a PDF, please use our other tool Vigi_PDF.py")
-               return -1
-          helpers.printo(outfile, f"File is not a windows PE !!")
-          return -1
+     
      helpers.printo(outfile, f"OK :)")
 
      if(not args.quiet):

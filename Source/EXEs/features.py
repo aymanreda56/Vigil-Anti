@@ -147,11 +147,11 @@ class SectionInfo(FeatureType):
             if int(LIEF_MAJOR) > 0 or (int(LIEF_MAJOR) == 0 and int(LIEF_MINOR) >= 12):
                 section = lief_binary.section_from_rva(lief_binary.entrypoint - lief_binary.imagebase)
                 if section is None:
-                    raise lief.not_found
+                    raise lief.lief_errors.not_found
                 entry_section = section.name
             else: # lief < 0.12
                 entry_section = lief_binary.section_from_offset(lief_binary.entrypoint).name
-        except lief.not_found:
+        except lief.lief_errors.not_found:
                 # bad entry point, let's find the first executable section
                 entry_section = ""
                 for s in lief_binary.sections:

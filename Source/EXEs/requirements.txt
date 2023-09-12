@@ -1,0 +1,6 @@
+lief
+numpy
+pandas
+PyExifTool
+scikit_learn
+tqdm
