@@ -94,7 +94,10 @@ path_to_script_folder = os.path.join(current_directory,'PDFid')
 model_path = os.path.join(current_directory, 'models', 'rf.pkl')
 
 
+def main():
+    if(args.folder_scan):
+        VP.ScanFolder_PDF(folder_in_path=args.file_path, model_path=model_path, quiet=args.quiet, aggressive=args.aggressive, verbose=args.verbose, outfile=args.output)
+    else: VP.ScanFile_pdf(file_path=args.file_path, modelPath=model_path, quiet=args.quiet, aggressive=args.aggressive, verbose=args.verbose, output=args.output)
 
-if(args.folder_scan):
-    VP.ScanFolder_PDF(folder_in_path=args.file_path, model_path=model_path, quiet=args.quiet, aggressive=args.aggressive, verbose=args.verbose, outfile=args.output)
-else: VP.ScanFile_pdf(file_path=args.file_path, modelPath=model_path, quiet=args.quiet, aggressive=args.aggressive, verbose=args.verbose, output=args.output)
+if __name__ == '__main__':
+     main()

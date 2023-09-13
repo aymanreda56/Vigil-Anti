@@ -1,19 +1,18 @@
 import os
 import sys
+import re
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
 from argparse import ArgumentParser, Namespace
 import Vigi_EXE.Vigi_EXE_lib as VE
 import Vigi_PDF.Vigi_PDF_lib as VP
 import glob, pathlib
+from exiftool import ExifToolHelper
+
 
 current_directory = os.path.split(os.path.realpath(__file__))[0]
 path = current_directory
-#os.environ['PATH'] += ':'+path
-
-Path_To_Vigi_Exe = os.path.join(current_directory, 'Vigi_EXE', "Vigi_EXE.py")
-Path_To_Vigi_PDF = os.path.join(current_directory, 'Vigi_PDF', "Vigi_PDF.py")
-
+os.environ['PATH'] += ':'+path
 
 
 
@@ -91,25 +90,38 @@ model_path_pdf = os.path.join(models_path_pdf, 'rf.pkl')
 # if(args.output): arguments+=[f'-o', f'{args.output}']
 # args.library_use= True
 
-
+def checkFileType(file_path):
+     with ExifToolHelper(check_tag_names=True, check_execute=True) as ee:
+          try:
+               metadata = ee.get_metadata(file_path)
+               
+               for i, d in enumerate(metadata):
+                    if 'File:FileType' in d.keys():
+                         fileTypeDict = d
+                         break
+               if(re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE)):
+                    return 1
+               elif(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
+                    return 2
+               else:
+                    return 0
+          except:
+               return -1
 
 def Folder_Scan(folder, modelpath, quiet, aggressive, verb, outfile):
      folder_path = pathlib.Path(folder)
      allFile_paths= list(folder_path.glob('*'))
      all_results = {}
      for fp in allFile_paths:
-          FileType = VE.checkFileType(file_path=fp)
+          FileType = checkFileType(file_path=fp)
           if(FileType == 1):
                result = VE.Scan_File_exe(file_path=fp, model_path=modelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile)
                all_results[fp] = result
           elif(FileType == 2):
+               print("here")
                result = VP.ScanFile_pdf(file_path=fp, model_path=model_path_pdf, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile)
                all_results[fp] = result
      return all_results
-
-
-
-
 
 
 
@@ -117,10 +129,12 @@ if(args.folder_scan):
      #VE.Folder_Scan_exe(folder=args.file_path, modelpath=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
      Folder_Scan(folder= args.file_path, modelpath= args.model, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
 else:
-     fileType = VE.checkFileType(file_path=args.file_path)
+     fileType = checkFileType(file_path=args.file_path)     
      if(fileType == 1):
+          print("here")
           VE.Scan_File_exe(file_path=args.file_path, model_path=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
      elif(fileType == 2):
+          print("here")
           VP.ScanFile_pdf(file_path=args.file_path, modelPath=model_path_pdf, quiet=args.quiet, aggressive=args.aggressive, verbose=args.verbose, output=args.output)
      elif(fileType == 0):
           print(f"File is not a windows PE nor PDF, wait for other modules for Vigil-Anti to support it")
@@ -128,37 +142,3 @@ else:
           print(f"File is Corrupt, delete it if you suspect it!")
 
 
-"""
-
-with ExifToolHelper() as et:
-     try:
-          metadata = et.get_metadata(args.file_path)
-          
-          for i, d in enumerate(metadata):
-               if 'File:FileType' in d.keys():
-                    fileTypeDict = d
-                    break
-          if(re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE)):
-               if(not args.folder_scan):
-                    VE.Scan_File_exe(file_path=args.file_path, model_path=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
-               else:
-                    pass
-                    #VE.Folder_Scan_exe(folder=args.file_path, modelpath=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
-               #run(['python', Path_To_Vigi_Exe, args.file_path]+arguments)
-          elif(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
-               #run(['python', Path_To_Vigi_PDF, args.file_path]+arguments)
-               pass
-          else:
-               print(f"File is not a PE nor a PDF, wait for Vigil-Anti's other modules to be released :)")
-     
-     except Exception as e:
-          print(f"File is Corrupt and couldn't be read, just delete it if the file is suspicious!")
-          print(str(e))
-
-
-
-
-if checkFileType(file_path=args.file_path):
-
-
-"""
