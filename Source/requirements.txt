@@ -1,3 +1,6 @@
+colorama
+ConfigParser
+matplotlib
 lief
 numpy
 pandas

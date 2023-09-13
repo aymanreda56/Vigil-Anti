@@ -7,9 +7,9 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import pickle
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset
+# import torch
+# import torch.nn as nn
+# from torch.utils.data import DataLoader, Dataset
 
 
 
@@ -403,118 +403,118 @@ def Inference(df_train, model_path, verbose=False, outfile=''):
 
 
 
-class NN1(nn.Module):
-    def __init__(self, num_features = 120):
-        super(NN1, self).__init__()
+# class NN1(nn.Module):
+#     def __init__(self, num_features = 120):
+#         super(NN1, self).__init__()
         
-        self.batch_norm1 = nn.BatchNorm1d(num_features)
-        self.dense1 = nn.Linear(num_features, 512)
-        self.batch_norm2 = nn.BatchNorm1d(512)
-        self.dense2 = nn.Linear(512, 128)
-        self.batch_norm3 = nn.BatchNorm1d(128)
-        self.dense3 = nn.Linear(128, 8)
-        self.softmax = nn.Softmax(dim=1)
+#         self.batch_norm1 = nn.BatchNorm1d(num_features)
+#         self.dense1 = nn.Linear(num_features, 512)
+#         self.batch_norm2 = nn.BatchNorm1d(512)
+#         self.dense2 = nn.Linear(512, 128)
+#         self.batch_norm3 = nn.BatchNorm1d(128)
+#         self.dense3 = nn.Linear(128, 8)
+#         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        x = self.batch_norm1(x.float())
-        x = torch.tanh(self.dense1(x))
-        x = self.batch_norm2(x.float())
-        x = torch.tanh(self.dense2(x))
-        x = self.batch_norm3(x.float())
-        x = torch.tanh(self.dense3(x))
-        x = self.softmax(x)
-        return x
+#     def forward(self, x):
+#         x = self.batch_norm1(x.float())
+#         x = torch.tanh(self.dense1(x))
+#         x = self.batch_norm2(x.float())
+#         x = torch.tanh(self.dense2(x))
+#         x = self.batch_norm3(x.float())
+#         x = torch.tanh(self.dense3(x))
+#         x = self.softmax(x)
+#         return x
 
 
 
 
 
 
-class NN2(nn.Module):
-    def __init__(self, num_features = 120):
-        super(NN2, self).__init__()
+# class NN2(nn.Module):
+#     def __init__(self, num_features = 120):
+#         super(NN2, self).__init__()
 
-        self.dense1 = nn.Linear(num_features, 512)
-        self.dense2 = nn.Linear(512, 128)
-        self.dense3 = nn.Linear(128, 8)
-        self.softmax = nn.Softmax(dim=1)
+#         self.dense1 = nn.Linear(num_features, 512)
+#         self.dense2 = nn.Linear(512, 128)
+#         self.dense3 = nn.Linear(128, 8)
+#         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        x = torch.tanh(self.dense1(x))
-        x = torch.tanh(self.dense2(x))
-        x = torch.tanh(self.dense3(x))
-        x = self.softmax(x)
-        return x
+#     def forward(self, x):
+#         x = torch.tanh(self.dense1(x))
+#         x = torch.tanh(self.dense2(x))
+#         x = torch.tanh(self.dense3(x))
+#         x = self.softmax(x)
+#         return x
 
 
 
-class NN3(nn.Module):
-    def __init__(self, num_features = 120):
-        super(NN3, self).__init__()
+# class NN3(nn.Module):
+#     def __init__(self, num_features = 120):
+#         super(NN3, self).__init__()
         
-        self.batch_norm1 = nn.BatchNorm1d(num_features)
-        self.dense1 = nn.Linear(num_features, 512)
-        self.lrelu1 = nn.LeakyReLU()
-        self.batch_norm2 = nn.BatchNorm1d(512)
-        self.dense2 = nn.Linear(512, 128)
-        self.lrelu2 = nn.LeakyReLU()
-        self.batch_norm3 = nn.BatchNorm1d(128)
-        self.dense3 = nn.Linear(128, 8)
-        self.lrelu3 = nn.LeakyReLU()
-        self.softmax = nn.Softmax(dim=1)
+#         self.batch_norm1 = nn.BatchNorm1d(num_features)
+#         self.dense1 = nn.Linear(num_features, 512)
+#         self.lrelu1 = nn.LeakyReLU()
+#         self.batch_norm2 = nn.BatchNorm1d(512)
+#         self.dense2 = nn.Linear(512, 128)
+#         self.lrelu2 = nn.LeakyReLU()
+#         self.batch_norm3 = nn.BatchNorm1d(128)
+#         self.dense3 = nn.Linear(128, 8)
+#         self.lrelu3 = nn.LeakyReLU()
+#         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        x = self.batch_norm1(x.float())
-        x = self.lrelu1(self.dense1(x))
-        x = self.batch_norm2(x.float())
-        x = self.lrelu2(self.dense2(x))
-        x = self.batch_norm3(x.float())
-        x = self.lrelu3(self.dense3(x))
-        x = self.softmax(x)
-        return x
+#     def forward(self, x):
+#         x = self.batch_norm1(x.float())
+#         x = self.lrelu1(self.dense1(x))
+#         x = self.batch_norm2(x.float())
+#         x = self.lrelu2(self.dense2(x))
+#         x = self.batch_norm3(x.float())
+#         x = self.lrelu3(self.dense3(x))
+#         x = self.softmax(x)
+#         return x
 
 
-class NN4(nn.Module):
-    def __init__(self, num_features = 120):
-        super(NN4, self).__init__()
+# class NN4(nn.Module):
+#     def __init__(self, num_features = 120):
+#         super(NN4, self).__init__()
         
-        self.batch_norm1 = nn.BatchNorm1d(num_features)
-        self.dense1 = nn.Linear(num_features, 512)
-        self.batch_norm2 = nn.BatchNorm1d(512)
-        self.dense2 = nn.Linear(512, 512)
-        self.batch_norm3 = nn.BatchNorm1d(512)
-        self.dense3 = nn.Linear(512, 128)
-        self.batch_norm4 = nn.BatchNorm1d(128)
-        self.dense4 = nn.Linear(128, 8)
-        self.softmax = nn.Softmax(dim=1)
+#         self.batch_norm1 = nn.BatchNorm1d(num_features)
+#         self.dense1 = nn.Linear(num_features, 512)
+#         self.batch_norm2 = nn.BatchNorm1d(512)
+#         self.dense2 = nn.Linear(512, 512)
+#         self.batch_norm3 = nn.BatchNorm1d(512)
+#         self.dense3 = nn.Linear(512, 128)
+#         self.batch_norm4 = nn.BatchNorm1d(128)
+#         self.dense4 = nn.Linear(128, 8)
+#         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        x = self.batch_norm1(x.float())
-        x = torch.tanh(self.dense1(x))
-        x = self.batch_norm2(x.float())
-        x = torch.tanh(self.dense2(x))
-        x = self.batch_norm3(x.float())
-        x = torch.tanh(self.dense3(x))
-        x = self.batch_norm4(x.float())
-        x = torch.tanh(self.dense4(x))
-        x = self.softmax(x)
-        return x
+#     def forward(self, x):
+#         x = self.batch_norm1(x.float())
+#         x = torch.tanh(self.dense1(x))
+#         x = self.batch_norm2(x.float())
+#         x = torch.tanh(self.dense2(x))
+#         x = self.batch_norm3(x.float())
+#         x = torch.tanh(self.dense3(x))
+#         x = self.batch_norm4(x.float())
+#         x = torch.tanh(self.dense4(x))
+#         x = self.softmax(x)
+#         return x
+ 
 
 
 
 
-
-# Define the testing function
-def Test_One_Input(model, input):
-    model.eval()  # Set the model to evaluation mode
-    device = next(model.parameters()).device  # Get the device of the model
+# # Define the testing function
+# def Test_One_Input(model, input):
+#     model.eval()  # Set the model to evaluation mode
+#     device = next(model.parameters()).device  # Get the device of the model
     
-    with torch.no_grad():
+#     with torch.no_grad():
             
-            # Forward pass
-            outputs = model(input.to(device=device))
-            # Get the predicted labels
-            _, preds = torch.max(outputs, 1)  # Get the predicted labels
+#             # Forward pass
+#             outputs = model(input.to(device=device))
+#             # Get the predicted labels
+#             _, preds = torch.max(outputs, 1)  # Get the predicted labels
 
     
-    return preds
+#     return preds

@@ -1,9 +1,0 @@
-To install the required packages:
-pip install -r requirements.txt
-
-
-To run the PDF antivirus on any file:
-python Vigi_PDF.py   <path to the target file>   <path to the selected pkl model>
-
-for example:
-python Vigi_PDF.py "D:\ClassWork\anti_virus\Vigil-Anti\Source\PDFs\testPDFs\CS Project Proposal- Team 3_V1.pdf" "D:\ClassWork\anti_virus\Vigil-Anti\Source\PDFs\svc.pkl" 

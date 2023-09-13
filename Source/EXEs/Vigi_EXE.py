@@ -121,12 +121,12 @@ class color:
     END = '\033[0m'
 
 
+ 
 
 
 
-
-def Scan_File(file_path, model_path):
-     if(not args.quiet):
+def Scan_File(file_path, model_path, quiet, aggressive, verb):
+     if(not quiet):
           helpers.printo(outfile, "\n\n[+] ================ Checking file Type... ======================\n")
 
      with ExifToolHelper() as et:
@@ -147,9 +147,9 @@ def Scan_File(file_path, model_path):
      
      helpers.printo(outfile, f"OK :)")
 
-     if(not args.quiet):
+     if(not quiet):
           helpers.printo(outfile, "\n\n[+] ================ Extracting Features... ======================\n")
-     extractor = features.PEFeatureExtractor(print_feature_warning=verbose)
+     extractor = features.PEFeatureExtractor(print_feature_warning=verb)
      if(extractor == -1):
           helpers.printo(outfile, "File is not a PE FILE !")
           return -1
@@ -160,32 +160,32 @@ def Scan_File(file_path, model_path):
           PE_file = f.read()
 
 
-
+     
      Raw_features = extractor.raw_features(PE_file)
      if(Raw_features == -1):
           helpers.printo(outfile, "File is not a PE FILE !")
           return -1
 
-     df_features = helpers.Preprocess_Features_into_dataframe(Raw_features, verbose=verbose, outfile=outfile)
+     df_features = helpers.Preprocess_Features_into_dataframe(Raw_features, verbose=verb, outfile=outfile)
 
 
 
-     if(not args.quiet):
+     if(not quiet):
           helpers.printo(outfile, "\n\n[+] ================ Testing on the ML model... ======================\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n")
 
 
 
-     if(not args.aggressive):
-          pred = helpers.Inference(df_features, model_path, verbose=verbose, outfile=outfile)
+     if(not aggressive):
+          pred = helpers.Inference(df_features, model_path, verbose=verb, outfile=outfile)
           if (pred == True):
-               if(not args.quiet):
+               if(not quiet):
                     helpers.printo(outfile, color.BOLD + "\n\n[+] ================ MALICIOUS FILE DETECTED ======================\n" + color.END)
                else:
                     helpers.printo(outfile, 'Malicious')
                return "Malicious"
 
           elif(pred == False):
-               if(not args.quiet):
+               if(not quiet):
                     helpers.printo(outfile, color.BOLD + "\n\n[+] ================ File is Safe :) ======================\n"  + color.END)
                else:
                     helpers.printo(outfile, 'Safe')
@@ -196,7 +196,7 @@ def Scan_File(file_path, model_path):
           returned_array=[]
           for mod, name in models.items():
                model_path= os.path.join(models_path, mod)
-               pred = helpers.Inference(df_features, model_path, verbose=verbose, outfile=outfile)
+               pred = helpers.Inference(df_features, model_path, verbose=verb, outfile=outfile)
                if (pred == True):
                     helpers.printo(outfile, f'Model: {name}               ------>            Malicious')
                     returned_array.append(f'Model: {name}               ------>            Malicious')
@@ -213,7 +213,7 @@ if(args.folder_scan):
      all_results = {}
      for fp in allFile_paths:
           helpers.printo(outfile, f"\n\nFile: {fp}:")
-          result = Scan_File(file_path=fp, model_path=model_path)
+          result = Scan_File(file_path=fp, model_path=model_path, quiet=args.quiet, aggressive=args.aggressive, verb=verbose)
           if(type(result) == list):
                for i in result: helpers.printo(outfile, i) if i != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
           else: helpers.printo(outfile, result) if result != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
