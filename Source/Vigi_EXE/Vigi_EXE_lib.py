@@ -117,7 +117,7 @@ def Folder_Scan_exe(folder, modelpath, quiet, aggressive, verb, outfile):
      all_results = {}
      for fp in allFile_paths:
           helpers.printo(outfile, f"\n\nFile: {fp}:")
-          result = Scan_File_exe(file_path=fp, model_path=modelpath, quiet=quiet, aggressive=aggressive, verb=verb)
+          result = Scan_File_exe(file_path=fp, model_path=modelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile)
           if(type(result) == list):
                for i in result: helpers.printo(outfile, i[0]) if i != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
           else: helpers.printo(outfile, result) if result != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")

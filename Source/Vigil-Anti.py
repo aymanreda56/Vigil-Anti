@@ -1,18 +1,19 @@
 import os
 import sys
 import re
+from exiftool import ExifToolHelper
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
 from argparse import ArgumentParser, Namespace
 import Vigi_EXE.Vigi_EXE_lib as VE
 import Vigi_PDF.Vigi_PDF_lib as VP
 import glob, pathlib
-from exiftool import ExifToolHelper
 
 
 current_directory = os.path.split(os.path.realpath(__file__))[0]
-path = current_directory
-os.environ['PATH'] += ':'+path
+parent_directory = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+ExifTool_path = os.path.join(parent_directory, 'exiftool')
+os.environ['PATH'] += ';'+ExifTool_path
 
 
 
@@ -91,22 +92,22 @@ model_path_pdf = os.path.join(models_path_pdf, 'rf.pkl')
 # args.library_use= True
 
 def checkFileType(file_path):
-     with ExifToolHelper(check_tag_names=True, check_execute=True) as ee:
-          try:
-               metadata = ee.get_metadata(file_path)
-               
-               for i, d in enumerate(metadata):
-                    if 'File:FileType' in d.keys():
-                         fileTypeDict = d
-                         break
-               if(re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE)):
-                    return 1
-               elif(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
-                    return 2
-               else:
-                    return 0
-          except:
-               return -1
+     #ee = ExifToolHelper()
+     try:
+          metadata = ExifToolHelper().get_metadata(file_path)
+          
+          for i, d in enumerate(metadata):
+               if 'File:FileType' in d.keys():
+                    fileTypeDict = d
+                    break
+          if(re.findall('win', fileTypeDict['File:FileType'], re.IGNORECASE)):
+               return 1
+          elif(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
+               return 2
+          else:
+               return 0
+     except:
+          return -1
 
 def Folder_Scan(folder, modelpath, quiet, aggressive, verb, outfile):
      folder_path = pathlib.Path(folder)
