@@ -1,5 +1,5 @@
 import os
-import sys
+import sys, pickle, random
 import re
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
@@ -106,90 +106,13 @@ default_model_path_exe = os.path.join(models_path_exe, 'rf.pkl')
 # args.library_use= True
 
 
-def schedule_minutes(file_path, N_minutes):
-     delete_schedule(file_path)
-     if(not os.path.exists(os.path.join(current_directory, 'Config'))):
-          os.mkdir('Config')
-     with open(os.path.join(current_directory, 'Config', 'config.txt'), 'a') as f:
-          f.write(f"{file_path}@@{N_minutes}::mins\n")
-
-def schedule_days(file_path, N_days):
-     delete_schedule(file_path)
-     if(not os.path.exists(os.path.join(current_directory, 'Config'))):
-          os.mkdir('Config')
-     with open(os.path.join(current_directory, 'Config', 'config.txt'), 'a') as f:
-          f.write(f"{file_path}@@{N_days}::days\n")
-
-def delete_schedule(file_path):
-     if(not os.path.isdir(os.path.join(current_directory, 'Config'))):
-          return
-     if(not os.path.isfile(os.path.join(current_directory, 'Config', 'config.txt'))):
-          return
-     with open(os.path.join(current_directory, 'Config', 'config.txt'), 'r') as f:
-          scheduleds = f.readlines()
-     if(scheduleds):
-          modified = []
-          for line in scheduleds:
-               if(re.findall(os.path.split(file_path)[1] , line)):
-                    continue
-               modified.append(line)
-          with open(os.path.join(current_directory, 'Config', 'config.txt'), 'w') as f:
-               f.write('\n'.join(modified))
-     all_jobs = re.findall('TaskName:.*(Vigil_Anti_\d+)', run(['schtasks', '/query', '/fo', 'LIST'], capture_output=True, text=True).stdout)
-     if(all_jobs):
-          for job in all_jobs:
-               run([ 'schtasks', '/delete', '/tn' ,job, '/f'])
-     
-
-
-
-def create_script(file_path, folder_scan):
-     name = re.sub("[^\w]", '_', rf"{file_path}")
-     if(folder_scan):
-          script_contents = f'cd /d "{current_directory}"\npython "Vigil_Anti.py" "{file_path}" -q -c -f -o {os.path.join(current_directory, "Config",f"Output_{name}.txt")}'
-     else:
-          script_contents = f'cd /d "{current_directory}"\npython "Vigil_Anti.py" "{file_path}" -q -c -o {os.path.join(current_directory,"Config", f"Output_{name}.txt")}'
-     with open(os.path.join(current_directory, "Config", f'task_{name}.bat'), 'w') as f:
-          f.write(script_contents)
-     return  os.path.join(current_directory, "Config", f'task_{name}.bat')
-
-
-def run_scheduler(folder_scan):
-     if(not os.path.exists(os.path.join(current_directory, 'Config'))):
-          return
-     with open(os.path.join(current_directory, 'Config', 'config.txt'), 'r') as f:
-          scheduleds = f.readlines()
-     for i, lin in enumerate(scheduleds):
-          line = re.sub(r'\n', '', lin)
-          file_path = re.findall('.*@@', line)
-          if(not file_path): print('\n\n\nEEEERRRRRRRRRRROOOOOOOOOOOOR in scheduler')
-          file_path = file_path[0][:-2]
-          n = re.findall('@@\d+::', line)
-          n = n[0][2:-2]
-          minutes_flag = True if re.findall('::mins', line) else False
-          days_flag = True if re.findall('::days', line) else False
-          time_span = 'DAILY' if days_flag else 'MINUTE'
-          run([f'schtasks', '/create','/sc', time_span, '/mo' ,n, '/f', '/tn' ,f"Vigil_Anti_{i}" ,"/tr", str(create_script(file_path=file_path, folder_scan=folder_scan))])
-          run(['schtasks' ,'/run', '/tn' ,f"Vigil_Anti_{i}"])
-
-def CleanOutput(file_path, result, outfile):
-     if (type(result) != dict):
-          with open(outfile,'w') as f:
-               f.write(f"{file_path}            {'Safe' if result == 0 else 'Malicious'}")
-     elif(type(result) == dict):
-          result_string = []
-          for k,v in result.items():
-               #result_string.append(f"{str(k)}              {'Safe' if v == 0 else 'Malicious'}")
-               #result_string.append("{:<100}{:<50}".format(''.join(str(k)), 'Safe' if v == 0 else 'Malicious'))
-               fi = '{:<100}'.format(str(k))
-               st = 'Safe' if v == 0 else 'Malicious'
-               result_string.append(fi+ st)
-          with open(outfile,'w') as f:
-               f.write('               Vigil_Anti     By    Ayman Reda\n')
-          with open(outfile,'a') as f:
-               f.write('\n'.join(result_string))
 
 def main():
+     with open('Vigi_EXE/models/names.pkl', 'rb') as f:
+          names = pickle.load(f)
+     if(not(args.quiet or args.no_ascii_art)):
+          print(color.CYAN+ names[random.randint(0, len(names)-1)]+color.END)
+          print('{0:>70}'.format("By Ayman Reda"))
      if(args.schedule_minutes != -1 and args.schedule_minutes != -2):
           schedule_minutes(file_path=os.path.abspath(args.file_path), N_minutes=args.schedule_minutes)
           run_scheduler(args.folder_scan)

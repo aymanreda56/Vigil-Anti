@@ -59,7 +59,22 @@ def getFolderPath():
             label2.pack(anchor=ctk.E)
 
 
-
+def ConfigureWindow():
+    conf_window = ctk.CTk()
+    select_file = ctk.CTkButton(conf_window, text='Select Target File', command=getFilePath)
+    select_file.pack()
+    select_folder = ctk.CTkButton(conf_window, text='Select Target File', command=getFolderPath)
+    select_folder.pack()
+    label=ctk.CTkLabel(conf_window, text='Scan every')
+    label.pack()
+    slider=ctk.CTkSlider(conf_window)
+    slider.pack()
+    print(slider.get())
+    radio_button1=ctk.CTkRadioButton(conf_window, value=2)
+    
+    radio_button1.pack()
+    
+    conf_window.mainloop()
 
 
 def scanFile(file_path):
@@ -76,6 +91,9 @@ scan_file_button = ctk.CTkButton(root, text='Scan a File!', command=getFilePath)
 scan_file_button.pack()
 scan_folder_button = ctk.CTkButton(root, text='Scan a Folder!', command=getFolderPath)
 scan_folder_button.pack()
+
+Configure_button = ctk.CTkButton(root, text='Schedule Scans', command=ConfigureWindow)
+Configure_button.pack()
 
 
 
