@@ -27,12 +27,12 @@ class color:
 
 
 
-def Scan_File_exe(file_path, model_path, quiet, aggressive, verb, outfile, no_ascii_art):
+def Scan_File_exe(file_path, model_path, quiet, aggressive, verb, outfile, no_ascii_art=False):
      if(not (no_ascii_art or quiet)):
           with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
                ascii_art = pickle.load(f)
 
-     helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
+               helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
      if(not quiet):
           helpers.printo(outfile, "\n\n[+] ================ Checking file Type... ======================\n")
 
@@ -116,12 +116,12 @@ def Scan_File_exe(file_path, model_path, quiet, aggressive, verb, outfile, no_as
 
 
 
-def Folder_Scan_exe(folder, modelpath, quiet, aggressive, verb, outfile, no_ascii_art):
+def Folder_Scan_exe(folder, modelpath, quiet, aggressive, verb, outfile, no_ascii_art=False):
      if(not (no_ascii_art or quiet)):
           with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
                ascii_art = pickle.load(f)
 
-     helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
+               helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
      folder_path = pathlib.Path(folder)
      allFile_paths= list(folder_path.glob('*'))
      all_results = {}

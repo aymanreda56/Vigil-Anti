@@ -1,5 +1,5 @@
 import os
-import sys, pickle, random
+import sys, pickle, random, time
 import re
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
@@ -113,6 +113,7 @@ def main():
      if(not(args.quiet or args.no_ascii_art)):
           print(color.CYAN+ names[random.randint(0, len(names)-1)]+color.END)
           print('{0:>70}'.format("By Ayman Reda"))
+          time.sleep(2)
      if(args.schedule_minutes != -1 and args.schedule_minutes != -2):
           schedule_minutes(file_path=os.path.abspath(args.file_path), N_minutes=args.schedule_minutes)
           run_scheduler(args.folder_scan)

@@ -1,10 +1,24 @@
 import os
-import re
+import re, pickle
 import sys
+from random import randint
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
 import VGhelpers as VA
+from PIL import Image, ImageTk
+current_Directory = os.path.split(os.path.realpath(__file__))[0]
+parent_Directory = os.path.split(current_Directory)[0]
+with open(os.path.join(current_Directory, 'Vigi_EXE', 'models', 'secret_tips.pkl'), 'rb') as f:
+    secret_tip_list = pickle.load(f)
+    secret_tip = secret_tip_list[randint(0, len(secret_tip_list)-1)]
+Aymans_Word = r'''
+Vigil-Anti is a Free Open Source
+Anti virus, built to be as light
+and efficient as possible while 
+being user friendly and reliable.
 
+right now, We support detecting:
+PE executables and PDF formats.'''
 
 
 
@@ -87,13 +101,46 @@ def scanFolder(folder_path):
 root= ctk.CTk()
 root.geometry("800x600")
 
-scan_file_button = ctk.CTkButton(root, text='Scan a File!', command=getFilePath)
-scan_file_button.pack()
-scan_folder_button = ctk.CTkButton(root, text='Scan a Folder!', command=getFolderPath)
-scan_folder_button.pack()
 
-Configure_button = ctk.CTkButton(root, text='Schedule Scans', command=ConfigureWindow)
-Configure_button.pack()
+logo_image = ctk.CTkImage(light_image=Image.open(os.path.join(parent_Directory, 'icons','Black_VIGI.png')), dark_image=Image.open(os.path.join(parent_Directory, 'icons','Black_VIGI.png')), size=(800,1016))
+logo_label = ctk.CTkLabel(root, width=400, height=400, image=logo_image, text='')
+logo_label.place(relx=0.4, rely=0.0)
+
+leftFrame = ctk.CTkFrame(root, width=370, height=600)
+leftFrame.place(relx=0.0, rely=0.1)
+Tip_Of_the_day = ctk.CTkLabel(leftFrame, width=370, height=120, text="Tip of the day", font=ctk.CTkFont(size=30, family='Helvetica', weight='bold'))
+Tip_Of_the_day.place(relx = 0.45, rely=0.1, anchor='center')
+lamp_img=ctk.CTkImage(light_image=Image.open(os.path.join(parent_Directory, 'icons','yellowlamp.png')), dark_image=Image.open(os.path.join(parent_Directory, 'icons','yellowlamp.png')), size=(48,48))
+lamp_label = ctk.CTkLabel(leftFrame, image=lamp_img, text='')
+lamp_label.place(relx=0.85, rely=0.1, anchor='center')
+
+
+tip_label = ctk.CTkLabel(leftFrame, text=secret_tip, font=ctk.CTkFont(size=15, family='Helvetica', weight='bold'))
+tip_label.place(relx=0.062, rely=0.18, anchor='nw')
+ayman_label = ctk.CTkLabel(leftFrame, text=Aymans_Word, font=ctk.CTkFont(size=17, family='Helvetica', weight='bold'))
+ayman_label.place(relx=0.45, rely= 0.7, anchor='center')
+
+
+vigilanti_place= ctk.CTkLabel(root, width=160,height=150, text='', font=ctk.CTkFont(size=30, family='Kozuka Gothic Pr6N B', weight='bold'), corner_radius=50, fg_color='blue')
+vigilanti_place.place(relx=0.5, rely=0.075, anchor='s')
+
+vigilanti_title= ctk.CTkLabel(root, height=30, text='Vigil-Anti', font=ctk.CTkFont(size=30, family='Kozuka Gothic Pr6N B', weight='bold'), fg_color='blue')
+vigilanti_title.place(relx=0.5, rely=0.025, anchor='center')
+
+
+frame_for_buttons = ctk.CTkFrame(root, width=600, height=42)
+frame_for_buttons.place(relx=0.65, rely=0.7)
+frame_for_schedule = ctk.CTkFrame(root, width=150, height=42)
+frame_for_schedule.place(relx=0.69, rely=0.78)
+scan_file_button = ctk.CTkButton(frame_for_buttons, text='Scan a File!', command=getFilePath, width=100)
+scan_file_button.grid(row=0, column=1)
+space_padding= ctk.CTkFrame(frame_for_buttons, width=10, height=42)
+space_padding.grid(row=0, column=2)
+scan_folder_button = ctk.CTkButton(frame_for_buttons, text='Scan a Folder!', command=getFolderPath, width=100)
+scan_folder_button.grid(row=0, column=3)
+
+Configure_button = ctk.CTkButton(frame_for_schedule, text='Schedule Scans', command=ConfigureWindow)
+Configure_button.grid(row=2,column=2)
 
 
 
