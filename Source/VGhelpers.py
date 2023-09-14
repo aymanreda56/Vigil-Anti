@@ -55,29 +55,29 @@ def checkFileType(file_path):
           print(color.BOLD+ color.PURPLE + f"File {file_path} is Corrupt, delete it if you suspect it!"  + color.END)
           return -1
 
-def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile=''):
+def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False):
      folder_path = pathlib.Path(folder)
      allFile_paths= list(folder_path.glob('*'))
      all_results = {}
      for fp in allFile_paths:
           FileType = checkFileType(file_path=fp)
           if(FileType == 1):
-               result = VE.Scan_File_exe(file_path=fp, model_path=EXEmodelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile)
+               result = VE.Scan_File_exe(file_path=fp, model_path=EXEmodelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile, no_ascii_art=no_ascii_art)
                all_results[fp] = result
           elif(FileType == 2):
                print("here")
-               result = VP.ScanFile_pdf(file_path=fp, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile)
+               result = VP.ScanFile_pdf(file_path=fp, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile, no_ascii_art=no_ascii_art)
                all_results[fp] = result
      return all_results
 
-def FileScan(filePath, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile=''):
+def FileScan(filePath, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False):
      fileType = checkFileType(file_path=filePath)     
      if(fileType == 1):
           print("here")
-          return VE.Scan_File_exe(file_path=filePath, model_path=EXEmodelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile)
+          return VE.Scan_File_exe(file_path=filePath, model_path=EXEmodelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile, no_ascii_art=no_ascii_art)
      elif(fileType == 2):
           print("here")
-          return VP.ScanFile_pdf(file_path=filePath, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile)
+          return VP.ScanFile_pdf(file_path=filePath, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile, no_ascii_art=no_ascii_art)
      elif(fileType == 0):
           print(f"File is not a windows PE nor PDF, wait for other modules for Vigil-Anti to support it")
           return -1

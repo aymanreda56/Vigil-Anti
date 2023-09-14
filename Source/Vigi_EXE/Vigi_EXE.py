@@ -99,16 +99,16 @@ elif(args.model == 'NN4'):
 elif(args.model == 'NN5'):
      model_path = os.path.join(models_path, 'NN5.pkl')
 
-if(not (args.no_ascii_art or args.quiet)):
-    with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
-        ascii_art = pickle.load(f)
+# if(not (args.no_ascii_art or args.quiet)):
+#     with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
+#         ascii_art = pickle.load(f)
 
-    helpers.printo(outputfile, ascii_art[randint(0, len(ascii_art)-1)])
+#     helpers.printo(outputfile, ascii_art[randint(0, len(ascii_art)-1)])
     
 
 
 if(not args.library_use):
      if(args.folder_scan):
-          VE.Folder_Scan_exe(folder=in_file_Path, modelpath=model_path, quiet=args.quiet, aggressive=args.aggressive, verb=verbose, outfile=outputfile)
+          VE.Folder_Scan_exe(folder=in_file_Path, modelpath=model_path, quiet=args.quiet, aggressive=args.aggressive, verb=verbose, outfile=outputfile, no_ascii_art=args.no_ascii_art)
 
-     else: VE.Scan_File_exe(file_path=in_file_Path, model_path=model_path, quiet=args.quiet, aggressive=args.aggressive, verb=verbose, outfile=outputfile)
+     else: VE.Scan_File_exe(file_path=in_file_Path, model_path=model_path, quiet=args.quiet, aggressive=args.aggressive, verb=verbose, outfile=outputfile, no_ascii_art=args.no_ascii_art)

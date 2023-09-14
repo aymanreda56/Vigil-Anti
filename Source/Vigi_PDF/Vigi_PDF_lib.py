@@ -56,7 +56,12 @@ def checkFileType(file_path):
                 return -1
 
 
-def ScanFile_pdf(file_path, modelPath, quiet, aggressive, verbose, output):
+def ScanFile_pdf(file_path, modelPath, quiet, aggressive, verbose, output, no_ascii_art):
+    if(not (no_ascii_art or quiet)):
+          with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
+               ascii_art = pickle.load(f)
+
+    VPhelpers.printo(output, ascii_art[randint(0, len(ascii_art)-1)])
 
     if(not quiet):
         VPhelpers.printo(output, "\n\n[+] ================ Checking file Type... ======================\n")
@@ -104,7 +109,12 @@ def ScanFile_pdf(file_path, modelPath, quiet, aggressive, verbose, output):
             return 0
         
 
-def ScanFolder_PDF(folder_in_path, model_path, quiet, aggressive, verbose, outfile):
+def ScanFolder_PDF(folder_in_path, model_path, quiet, aggressive, verbose, outfile, no_ascii_art):
+    if(not (no_ascii_art or quiet)):
+          with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
+               ascii_art = pickle.load(f)
+
+    VPhelpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
     folder_path = pathlib.Path(folder_in_path)
     allFile_paths= list(folder_path.glob('*'))
     all_results = {}

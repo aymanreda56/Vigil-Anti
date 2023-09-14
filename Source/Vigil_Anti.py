@@ -1,7 +1,6 @@
 import os
 import sys
 import re
-from exiftool import ExifToolHelper
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
 from argparse import ArgumentParser, Namespace
@@ -15,6 +14,7 @@ current_directory = os.path.split(os.path.realpath(__file__))[0]
 parent_directory = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 ExifTool_path = os.path.join(parent_directory, 'exiftool')
 os.environ['PATH'] += ';'+ExifTool_path
+from exiftool import ExifToolHelper
 
 
 
@@ -107,14 +107,14 @@ default_model_path_exe = os.path.join(models_path_exe, 'rf.pkl')
 
 
 def schedule_minutes(file_path, N_minutes):
-     #delete_schedule(file_path)
+     delete_schedule(file_path)
      if(not os.path.exists(os.path.join(current_directory, 'Config'))):
           os.mkdir('Config')
      with open(os.path.join(current_directory, 'Config', 'config.txt'), 'a') as f:
           f.write(f"{file_path}@@{N_minutes}::mins\n")
 
 def schedule_days(file_path, N_days):
-     #delete_schedule(file_path)
+     delete_schedule(file_path)
      if(not os.path.exists(os.path.join(current_directory, 'Config'))):
           os.mkdir('Config')
      with open(os.path.join(current_directory, 'Config', 'config.txt'), 'a') as f:
@@ -130,7 +130,7 @@ def delete_schedule(file_path):
      if(scheduleds):
           modified = []
           for line in scheduleds:
-               if(str(file_path) in line):
+               if(re.findall(os.path.split(file_path)[1] , line)):
                     continue
                modified.append(line)
           with open(os.path.join(current_directory, 'Config', 'config.txt'), 'w') as f:
@@ -169,7 +169,7 @@ def run_scheduler(folder_scan):
           minutes_flag = True if re.findall('::mins', line) else False
           days_flag = True if re.findall('::days', line) else False
           time_span = 'DAILY' if days_flag else 'MINUTE'
-          run([f'schtasks', '/create','/sc', time_span, '/mo' ,n, '/rl','HIGHEST','/f', '/tn' ,f"Vigil_Anti_{i}" ,"/tr", str(create_script(file_path=file_path, folder_scan=folder_scan))])
+          run([f'schtasks', '/create','/sc', time_span, '/mo' ,n, '/f', '/tn' ,f"Vigil_Anti_{i}" ,"/tr", str(create_script(file_path=file_path, folder_scan=folder_scan))])
           run(['schtasks' ,'/run', '/tn' ,f"Vigil_Anti_{i}"])
 
 def CleanOutput(file_path, result, outfile):
@@ -207,10 +207,10 @@ def main():
 
      if(args.folder_scan):
           #VE.Folder_Scan_exe(folder=args.file_path, modelpath=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
-          result = Folder_Scan(folder= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf,quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
+          result = Folder_Scan(folder= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf,quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art)
           print(result)
      else: 
-          result = FileScan(filePath= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
+          result = FileScan(filePath= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art)
           print(result)
      
      if(args.clean_output):

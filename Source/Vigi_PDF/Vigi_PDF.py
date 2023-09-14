@@ -64,11 +64,11 @@ if(args.verbose):
 in_file_Path = args.file_path
 
 
-if(not (args.no_ascii_art or args.quiet)):
-    with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
-        ascii_art = pickle.load(f)
+# if(not (args.no_ascii_art or args.quiet)):
+#     with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
+#         ascii_art = pickle.load(f)
 
-    VPhelpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
+#     VPhelpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
     
 
 class color:
