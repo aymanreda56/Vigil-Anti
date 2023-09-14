@@ -38,10 +38,10 @@ def Scan_File_exe(file_path, model_path, quiet, aggressive, verb, outfile):
           helpers.printo(outfile, f"File is a PDF, please use our other tool Vigi_PDF.py")
           return -1
      elif(fileType == 0):
-          helpers.printo(outfile, f"File is not a windows PE !!")
+          helpers.printo(outfile, color.YELLOW+ color.BOLD +f"File {file_path} is not a windows PE !!"+ color.END)
           return -1
      else:
-          helpers.printo(outfile, f"File is Corrupt, delete it if you suspect it!")
+          helpers.printo(outfile, color.PURPLE+ color.BOLD +f"File {file_path} is Corrupt, delete it if you suspect it!"+ color.END)
           return -1
      
      helpers.printo(outfile, f"OK :)")

@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 import re
 import pickle
 from subprocess import run, DEVNULL, STDOUT

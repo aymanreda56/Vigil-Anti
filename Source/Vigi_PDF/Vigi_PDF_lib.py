@@ -1,4 +1,4 @@
-import helpers
+import VPhelpers
 import os
 import re
 import sys
@@ -49,59 +49,58 @@ def checkFileType(file_path):
                elif(re.findall('pdf', fileTypeDict['File:FileType'], re.IGNORECASE)):
                     return 2
                else:
+                    VPhelpers.printo('', color.BOLD+ color.YELLOW + f"File {file_path} is not a windows PE !!"  + color.END)
                     return 0
           except:
-               return -1
+                VPhelpers.printo('', color.BOLD+ color.PURPLE + f"File {file_path} is Corrupt, delete it if you suspect it!"  + color.END)
+                return -1
 
 
 def ScanFile_pdf(file_path, modelPath, quiet, aggressive, verbose, output):
 
     if(not quiet):
-        helpers.printo(output, "\n\n[+] ================ Checking file Type... ======================\n")
+        VPhelpers.printo(output, "\n\n[+] ================ Checking file Type... ======================\n")
 
     FileType = checkFileType(file_path=file_path)
     if(FileType == 1):
-        helpers.printo(output, f"File is a PE, please use our other tool Vigi_EXE.py")
+        VPhelpers.printo(output, f"File is a PE, please use our other tool Vigi_EXE.py")
         return -1
     elif(FileType == 2):
         pass
     elif(FileType == 0):
-        helpers.printo(output, f"File is not a PDF !!")
+        VPhelpers.printo(output, f"File is not a PDF !!")
         return -1
     else:
-        helpers.printo(output, f"File {file_path} not Parseable")
+        VPhelpers.printo(output, f"File {file_path} not Parseable")
         return -1
     
     
-    helpers.printo(output, f"OK :)")
-
-
-
+    VPhelpers.printo(output, f"OK :)")
 
     if(not quiet):
-        helpers.printo(output, "\n\n[+] ================ Extracting Features... ======================\n")
+        VPhelpers.printo(output, "\n\n[+] ================ Extracting Features... ======================\n")
 
-    feature_df = helpers.Extract_Features(file_path, path_to_script_folder, outfile=output, verbose=verbose)
+    feature_df = VPhelpers.Extract_Features(file_path=file_path, path_to_script_folder=path_to_script_folder, outfile=output, verbose=verbose)
     if(not(type(feature_df) == int and feature_df == 1)):
-        feature_df = helpers.reorder_df(feature_df, [], ready_columns=columns)
+        feature_df = VPhelpers.reorder_df(feature_df, [], ready_columns=columns)
         if(not quiet):
-            helpers.printo(output, "\n\n[+] ================ Testing on the ML model... ======================\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n")
+            VPhelpers.printo(output, "\n\n[+] ================ Testing on the ML model... ======================\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n\t\t\t\t||\n")
 
-        Pred = helpers.test_on_file(feature_df, modelPath, outfile=output)
+        Pred = VPhelpers.test_on_file(feature_df, modelPath, outfile=output)
 
 
         if (Pred[0] == True):
             if(not quiet):
-                helpers.printo(output,color.BOLD + "\n\n[+] ================ MALICIOUS FILE DETECTED ======================\n" + color.END)
+                VPhelpers.printo(output,color.BOLD+ color.RED + "\n\n[+] ================ MALICIOUS FILE DETECTED ======================\n" + color.END)
             else:
-                    helpers.printo(output, 'Malicious')
+                    VPhelpers.printo(output, 'Malicious')
             return 1
 
         elif(Pred[0] == False):
             if(not quiet):
-                helpers.printo(output, color.BOLD + "\n\n[+] ================ File is Safe :) ======================\n"  + color.END)
+                VPhelpers.printo(output, color.BOLD+ color.GREEN + "\n\n[+] ================ File is Safe :) ======================\n"  + color.END)
             else:
-                helpers.printo(output, 'Safe')
+                VPhelpers.printo(output, 'Safe')
             return 0
         
 
@@ -110,14 +109,14 @@ def ScanFolder_PDF(folder_in_path, model_path, quiet, aggressive, verbose, outfi
     allFile_paths= list(folder_path.glob('*'))
     all_results = {}
     for fp in allFile_paths:
-        helpers.printo(outfile, f"\n\nFile: {fp}:")
+        VPhelpers.printo(outfile, f"\n\nFile: {fp}:")
         result = ScanFile_pdf(file_path=fp, modelPath=model_path, quiet=quiet, aggressive=aggressive, verbose=verbose, output=outfile)
         if(type(result) == list):
-            for i in result: helpers.printo(outfile, i) if i != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
-        else: helpers.printo(outfile, result) if result != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
+            for i in result: VPhelpers.printo(outfile, i) if i != -1 else VPhelpers.printo(outfile, "Cannot be Parsed or scanned")
+        else: VPhelpers.printo(outfile, result) if result != -1 else VPhelpers.printo(outfile, "Cannot be Parsed or scanned")
         all_results[fp] = result
     for k, v in all_results.items():
-        helpers.printo(outfile, f"---------------------------------------------------------------------------------------------------------\n\n\nFile {k}: \n")
+        VPhelpers.printo(outfile, f"---------------------------------------------------------------------------------------------------------\n\n\nFile {k}: \n")
         if(type(result) == list):
-            for i in result: helpers.printo(outfile, i) if i != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
-        else: helpers.printo(outfile, result) if result != -1 else helpers.printo(outfile, "Cannot be Parsed or scanned")
+            for i in result: VPhelpers.printo(outfile, i) if i != -1 else VPhelpers.printo(outfile, "Cannot be Parsed or scanned")
+        else: VPhelpers.printo(outfile, result) if result != -1 else VPhelpers.printo(outfile, "Cannot be Parsed or scanned")

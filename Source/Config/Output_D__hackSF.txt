@@ -1,0 +1,12 @@
+               Vigil_Anti     By    Ayman Reda
+D:\hackSF\8.0_AdbeRdr80_en_US.exe                                                                   Safe
+D:\hackSF\9.0_AdbeRdr90_en_US.exe                                                                   Safe
+D:\hackSF\application.pdf                                                                           Malicious
+D:\hackSF\didnt understand (2)                                                                      Malicious
+D:\hackSF\evil.pdf                                                                                  Malicious
+D:\hackSF\new refrencing wierd                                                                      Malicious
+D:\hackSF\no js but it open a sus URL.pdf                                                           Safe
+D:\hackSF\quiz.pdf                                                                                  Malicious
+D:\hackSF\quiz_sanitized.pdf                                                                        Malicious
+D:\hackSF\setup.exe                                                                                 Safe
+D:\hackSF\wierd a long js talk                                                                      Malicious

@@ -1,4 +1,4 @@
-import helpers
+import VPhelpers
 import os
 import re
 import sys
@@ -52,7 +52,7 @@ if(args.output):
 
 verbose= False
 if(args.verbose):
-    helpers.printo(outfile, f"\n\nHave a cup of coffee while Vigil-Anti does its thing :)\n\n\n")
+    VPhelpers.printo(outfile, f"\n\nHave a cup of coffee while Vigil-Anti does its thing :)\n\n\n")
     time.sleep(2)
     verbose=True
 
@@ -68,7 +68,7 @@ if(not (args.no_ascii_art or args.quiet)):
     with open (os.path.join(current_directory, 'models', 'secret.pkl'), 'rb') as f:
         ascii_art = pickle.load(f)
 
-    helpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
+    VPhelpers.printo(outfile, ascii_art[randint(0, len(ascii_art)-1)])
     
 
 class color:
