@@ -71,7 +71,22 @@ def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=defaul
                all_results[fp] = result
      return all_results
 
-
+def Folder_Scan_with_metrics(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False):
+     folder_path = pathlib.Path(folder)
+     allFile_paths= list(folder_path.glob('*'))
+     all_results = {}
+     yield len(allFile_paths)
+     for i, fp in enumerate(allFile_paths):
+          FileType = checkFileType(file_path=fp)
+          if(FileType == 1):
+               result = VE.Scan_File_exe(file_path=fp, model_path=EXEmodelpath, quiet=quiet, aggressive=aggressive, verb=verb, outfile=outfile, no_ascii_art=no_ascii_art)
+               all_results[fp] = result
+          elif(FileType == 2):
+     
+               result = VP.ScanFile_pdf(file_path=fp, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile, no_ascii_art=no_ascii_art)
+               all_results[fp] = result
+          yield i
+     yield all_results
 
 
 
@@ -115,16 +130,19 @@ def delete_schedule(file_path):
      if(scheduleds):
           modified = []
           for line in scheduleds:
-               if(re.findall(os.path.split(file_path)[1] , line)):
+               lin = re.sub('\n', '', line)
+               smolPath = re.findall('(.*)@@', lin)[0]
+               if(os.path.abspath(file_path) == os.path.abspath(smolPath)):
                     continue
-               modified.append(line)
+               modified.append(re.sub('\n','',line))
           with open(os.path.join(current_directory, 'Config', 'config.txt'), 'w') as f:
-               f.write('\n'.join(modified))
+               if(modified):
+                    f.write('\n'.join(modified))
+                    f.write('\n')
      all_jobs = re.findall('TaskName:.*(Vigil_Anti_\d+)', run(['schtasks', '/query', '/fo', 'LIST'], capture_output=True, text=True).stdout)
      if(all_jobs):
           for job in all_jobs:
                run([ 'schtasks', '/delete', '/tn' ,job, '/f'])
-     
 
 
 
