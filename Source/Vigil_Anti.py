@@ -3,7 +3,7 @@ import sys, pickle, random, time
 import re
 sys.path.append('Vigi_EXE')
 sys.path.append('Vigi_PDF')
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace, SUPPRESS
 import Vigi_EXE.Vigi_EXE_lib as VE
 import Vigi_PDF.Vigi_PDF_lib as VP
 import glob, pathlib
@@ -41,6 +41,7 @@ group3.add_argument('-sd', '--schedule-days', help=
                     You can remove this folder from the Schedulers by entering -1''', choices=range(-1,100), type=int, default=-2, metavar='[-1-100]')
 parser.add_argument('-c', '--clean-output', help='Display very minimal output at the end of the output file', action='store_true', default=False)
 
+parser.add_argument('-N', '--Notify', help=SUPPRESS, default=False, action='store_true')
 
 
 args: Namespace = parser.parse_args()
@@ -131,10 +132,10 @@ def main():
 
      if(args.folder_scan):
           #VE.Folder_Scan_exe(folder=args.file_path, modelpath=model_path_exe, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output)
-          result = Folder_Scan(folder= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf,quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art)
+          result = Folder_Scan(folder= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf,quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art, notify=args.Notify)
           print(result)
      else: 
-          result = FileScan(filePath= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art)
+          result = FileScan(filePath= args.file_path, EXEmodelpath= model_path_exe, PDFmodelpath=model_path_pdf, quiet=args.quiet, aggressive=args.aggressive, verb=args.verbose, outfile=args.output, no_ascii_art=args.no_ascii_art, notify=args.Notify)
           print(result)
      
      if(args.clean_output):

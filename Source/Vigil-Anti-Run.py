@@ -28,10 +28,11 @@ PE executables and PDF formats.'''
 import customtkinter as ctk
 
 global file_path, folder_path
+already_Placed = False
+root = None
 
 file_path, folder_path = False, False
-All_gifImages = [os.path.join(parent_Directory, 'icons', i) for i in ['duck.gif', 'bird.gif', 'nyan.gif']]
-gifImage = All_gifImages[randint(0, 2)]
+sch_output =[]
 
 def getFileStatus_from_code(return_code):
     if return_code ==0:
@@ -78,146 +79,176 @@ def getFilePath_and_scan():
 
 
 
+All_gifImages = [os.path.join(parent_Directory, 'icons', i) for i in ['resized_duck.gif', 'resized_bird.gif', 'resized_nyan.gif']]
+gifImage = All_gifImages[randint(0, 2)]
+openImage = Image.open(gifImage)
+frames = openImage.n_frames
+currentFrameIndex = 0
+imageObject =[]
+final_result = {}
+stopFlag = False
+thread1 = None
 
 
-def Folder_result_window():
+def Folder_result_Loading_window():
     
+    def animation(gif_label, imageObject):
+        global currentFrameIndex
+        #global imageObject
+        newImage = imageObject[currentFrameIndex]
+        gif_label.configure(image=newImage)
+        gif_label.image= newImage
+        currentFrameIndex += 1
+        if(currentFrameIndex == frames): currentFrameIndex=0
+
 
     def getFolderPath_and_scan():
+        global thread1
         global folder_path
         folder_path = ctk.filedialog.askdirectory()
+        print(folder_path)
+        if (folder_path == ''):
+            fold_win.destroy()
         if folder_path:
-            print(folder_path)
             progress_label = ctk.CTkLabel(fold_win, text=f"Please wait while Vigil-Anti is Scanning {folder_path} ...",font=ctk.CTkFont(size=20, family='Helvetica', weight='bold'))
             progress_label.place(relx = 0.5, rely= 0.43, anchor='center')
             progbar = ctk.CTkProgressBar(fold_win, orientation=ctk.HORIZONTAL, width=380,mode="determinate")
+            progbar.set(0)
             progbar.place(relx=0.5, rely=0.5, anchor='center')
-            
+
+            def anime():
+                global stopFlag
+                while(True):
+                    fold_win.after(50, animation,load_label, imageObject)
+                    if(stopFlag):
+                        return
+                    time.sleep(0.05)
             def update_progress():
+                global stopFlag
+                global final_result
                 fl = False
-                
                 for iter in scanFolder(folder_path=folder_path):
+                    fold_win.after(50, animation,load_label, imageObject)
                     if not fl:
                         num_files = iter
                         fl = True
                     if type(iter) == int and iter > 0:
                         progbar.set(iter / num_files)
                     else:
+                        progbar.set(1)
                         final_result = iter
-
-                for k, v in final_result.items():
-                    label1 = ctk.CTkLabel(fold_win, text=str(k))
-                    label2 = ctk.CTkLabel(fold_win, text=getFileStatus_from_code(v))
-                    label1.pack(anchor=ctk.W)
-                    label2.pack(anchor=ctk.E)
+                stopFlag = True
+                fold_win.destroy()
+                Folder_result_window(final_result)
+                
+                
     
-            thread = threading.Thread(target=update_progress)
-            thread.start()
-
-
+            thread1 = threading.Thread(target=update_progress)
+            thread1.start()
+            thread2 = threading.Thread(target=anime)
+            thread2.start()
+            
 
 
     fold_win = ctk.CTk()
     fold_win.geometry('800x600')
+    imageObject = [PhotoImage(master=fold_win, file=gifImage, format=f"gif -index {i}") for i in range(frames)]
+    
+    load_label= ctk.CTkLabel(fold_win, text='')
+    load_label.place(relx=0.5, rely=0.8, anchor='center')
+    #animation(load_label)
+    
+    #if(not getFolderPath_and_scan()): fold_win.destroy()
     getFolderPath_and_scan()
+    #fold_win.after(50, lambda: animation(load_label, imageObject))
+    
+    
 
     fold_win.mainloop()
 
+def cleanse_n_sort(res:dict):
+    mal_list= []
+    safe_list = []
+    unk_list = []
+    for k,v in res.items():
+        if v == 1:
+            mal_list.append((k,v))
+        elif v==0:
+            safe_list.append((k,v))
+        else:
+            unk_list.append((k,v))
+    return mal_list + safe_list + unk_list
 
-class gifplay:
-    """
-    Usage: mygif=gifplay(<<tkinter.label Objec>>,<<GIF path>>,<<frame_rate(in ms)>>)
-    example:
-    gif=GIF.gifplay(self.model2,'./res/neural.gif',0.1)
-    gif.play()
-    This will play gif infinitely
-    """
-    def __init__(self,label,giffile,delay):
-        self.frame=[]
-        i=0
-        while 1:
-            try:
-                image=PhotoImage(file = giffile, format="gif -index "+str(i))
-                self.frame.append(image)
-                i=i+1
-            except:
-                break
-        print(i)
-        self.totalFrames=i-1
-        self.delay=delay
-        self.labelspace=label
-        self.labelspace.image=self.frame[0]
+def Folder_result_window(results:dict):
 
-    def play(self):
-        """
-        plays the gif
-        """
-        _thread.start_new_thread(self.infinite,())
-
-    def infinite(self):
-        i=0
-        while 1:
-            self.labelspace.configure(image=self.frame[i])
-            i=(i+1)%self.totalFrames
-            time.sleep(self.delay)
-
-
-"""
-def animate(i):
-    try:
-        photo = ImageTk.PhotoImage(Image.open('your_gif.gif').seek(i))
-        label.config(image=photo)
-        label.image = photo
-        root.after(100, animate, i+1)
-    except:
-        root.after(100, animate, 0)
-
-root = ctk.CTk()
-label = ctk.CTkLabel(root)
-label.pack()
-root.after(0, animate, 0)  # Start the animation
-root.mainloop()
-"""
-
-
-
-
-
-
-# def Folder_result_window():
-
-
-#     def getFolderPath_and_scan():
-#         global folder_path
-#         folder_path = ctk.filedialog.askdirectory()
-#         if(folder_path):
-#             print(folder_path)
-            
-#             progbar = ctk.CTkProgressBar(fold_win, orientation=ctk.HORIZONTAL, mode="determinate")
-#             progbar.place(relx=0.5, rely=0.5, anchor='center')
-            
-#             fl = False
-#             for iter in scanFolder(folder_path=folder_path):
-#                 if not fl:
-#                     num_files=iter
-#                     fl = True
-#                 if(type(iter) == int and iter > 0):
-#                     progbar.set(iter/num_files)
-#                 else:
-#                     final_result = iter
-
-#             for k,v in final_result.items():
-#                 label1 = ctk.CTkLabel(fold_win, text= str(k))
-#                 label2 = ctk.CTkLabel(fold_win, text= getFileStatus_from_code(v))
-#                 label1.pack(anchor=ctk.W)
-#                 label2.pack(anchor=ctk.E)
-
-#     fold_win= ctk.CTk()
-#     fold_win.geometry('500x300')
-#     getFolderPath_and_scan()
-#     fold_win.mainloop()
-    
+    def delete_threat(filepath):
         
+        # def warning_window():
+        #     warn_window= ctk.CTk()
+        #     warn_window.geometry('300x200')
+        #     im = Image.open(os.path.join(parent_Directory, 'icons', 'warning.png'))
+        #     img_label=ctk.CTkLabel(warn_window, image=ctk.CTkImage(light_image=im,dark_image=im, size=(100,100)))
+        #     img_label.image=im
+        #     img_label.pack()
+        #     warnLabel = ctk.CTkLabel(warn_window, text='''Vigil-Anti does not have permission to delete this file
+        #                              go delete it yourself :)''')
+        #     close_button = ctk.CTkButton(warn_window, text='Close', command=warn_window.destroy)
+        #     warn_window.mainloop()
+            
+        try:
+            os.remove(os.path.abspath(filepath))
+            delete_widget(filpath=filepath)
+            #warning_window()
+        except Exception as e:
+            print(f'\n\n\n                           WARNING\n\n\n{e}')
+
+
+    def delete_widget(filpath):
+        for wid in widget_list:
+            if wid[0].cget('text') == filpath:
+                wid[2].destroy()
+                wid[1].destroy()
+                wid[0].destroy()
+                wid[3].destroy()
+
+
+    results = cleanse_n_sort(results)
+    fold_res_window = ctk.CTk()
+    fold_res_window.geometry('700x450')
+    widget_list = []
+    scrollable_frame = ctk.CTkScrollableFrame(fold_res_window, width=670, height=430)
+    scrollable_frame.pack()
+    for path, status in results:
+        task_frame = ctk.CTkFrame(scrollable_frame, width=650, height=50)
+        task_frame.pack(pady=4)
+        task_path_label = ctk.CTkLabel(task_frame, text= str(path))
+        task_path_label.place(relx=0.02, rely=0.5, anchor='w')
+        
+        if status == 1:
+            status_string = "Malicious"
+            fg_color = 'red'
+            width = len(status_string)*15
+        elif status == 0:
+            status_string = "Safe"
+            fg_color = 'green'
+            width = len(status_string)*15
+        else:
+            status_string="Format not supported yet"
+            fg_color = 'brown'
+            width = 50
+        task_duration = ctk.CTkLabel(task_frame, text=status_string, fg_color=fg_color, corner_radius=30, width=width)
+        task_duration.place(relx=0.55, rely=0.5, anchor='center')
+        if(status ==1):
+            delete_button = ctk.CTkButton(task_frame, text= 'Remove Threat', fg_color='red', width=60, command= lambda filepath=str(path): delete_threat(filepath))
+            delete_button.place(relx=0.8, rely=0.5, anchor='w')
+        widget_list.append((task_path_label, task_duration, delete_button, task_frame))
+    
+    fold_res_window.mainloop()
+
+
+
+
+
 
 def parse_schedule():
     if(os.path.isfile(os.path.join(current_Directory, 'Config', 'config.txt'))):
@@ -242,7 +273,7 @@ def parse_schedule():
         return -1
 
 
-def unschedule_window():
+def unschedule_window(but):
     
     def unschedule_task(index):
             widget_to_be_destroyed = widget_list[index]
@@ -253,6 +284,9 @@ def unschedule_window():
             widget_to_be_destroyed[1].destroy()
             widget_to_be_destroyed[0].destroy()
             widget_to_be_destroyed[3].destroy()
+            if(len(widget_list) == 1):
+                but.configure(text='no scheduled scans',state=ctk.DISABLED)
+                unsch_window.destroy()
     
     
 
@@ -260,6 +294,7 @@ def unschedule_window():
     unsch_window.geometry('600x150')
     scheduled_tasks=parse_schedule()
     widget_list = []
+    if(type(scheduled_tasks) != list): return
     for index, task in enumerate(scheduled_tasks):
         task_frame = ctk.CTkFrame(unsch_window, width=570, height=50)
         task_frame.pack()
@@ -330,14 +365,21 @@ def ConfigureWindow():
             VA.schedule_days(file_path=fullCommand['path'], N_days=fullCommand['duration'])
             VA.run_scheduler(fullCommand['folder'])
         scheduled_tasks = parse_schedule()
-        del_prev_button.configure(state=ctk.DISABLED if scheduled_tasks == -1 else ctk.NORMAL)
+        if(scheduled_tasks == -1):
+            del_prev_button.configure(state=ctk.DISABLED, text='no scheduled scans')
+        else:
+            del_prev_button.configure(state=ctk.NORMAL)
+        #del_prev_button.configure(state=ctk.DISABLED if scheduled_tasks == -1 else ctk.NORMAL)
         #fullCommand['path']=''
         path_label.configure(text='')
 
     def unschedule():
-        unschedule_window()
+        unschedule_window(del_prev_button)
         scheduled_tasks = parse_schedule()
-        del_prev_button.configure(state=ctk.DISABLED if scheduled_tasks == -1 else ctk.NORMAL)
+        if(scheduled_tasks == -1):
+            del_prev_button.configure(state=ctk.DISABLED, text='no scheduled scans')
+        else:
+            del_prev_button.configure(state=ctk.NORMAL)
 
         
 
@@ -392,6 +434,138 @@ def scanFolder(folder_path):
     return VA.Folder_Scan_with_metrics(folder=folder_path)
 
 
+
+def remove_from_output_files(file_path, but):
+    global sch_output
+    config_directory = os.path.join(current_Directory, 'Config')
+    allFiles = os.listdir(config_directory)
+    for file in allFiles:
+        if file.startswith('Output') and file.endswith('.txt'):
+            output_file_path = os.path.join(config_directory, file)
+            with open(output_file_path, 'r') as f:
+                if(not f.read() ):
+                    continue
+            with open(output_file_path, 'r') as f:
+                if(len(f.readlines())< 2):
+                    continue
+            with open(output_file_path, 'r') as f:
+                fileLines=f.readlines()
+            modified=[]
+            modified.append(re.sub('\n','',fileLines[0]))
+            for lin in fileLines[1:]:
+                line_with_no_newlines = re.sub('\n', '', lin)
+                smolPath = re.findall('(.*)\s+Malicious', line_with_no_newlines)
+                if(not smolPath): continue
+                smolPath = smolPath[0]
+                if(os.path.abspath(file_path) == os.path.abspath(smolPath)):
+                    continue
+                modified.append(line_with_no_newlines)
+            with open(os.path.join(config_directory, file), 'w') as f:
+               if(modified):
+                    f.write('\n'.join(modified))
+                    f.write('\n')
+            if(len(modified) == 1):
+                os.remove(os.path.join(config_directory, file))
+        else: continue
+    
+    sch_output = check_sch_output()
+    if(not sch_output):
+        but.configure(text='All threats resolved', fg_color='green', state=ctk.DISABLED)
+        return
+
+
+
+def show_threats(results:dict, but:ctk.CTkButton):
+    def delete_threat(filepath):
+        try:
+            print(os.path.abspath(filepath))
+            os.remove(os.path.abspath(filepath))
+            remove_from_output_files(filepath, but)
+            delete_widget(filpath=filepath)
+            #warning_window()
+        except Exception as e:
+            print(f'\n\n\n                           WARNING\n\n\n{e}')
+
+
+    def delete_widget(filpath):
+        for wid in widget_list:
+            if wid[0].cget('text') == filpath:
+                wid[2].destroy()
+                wid[1].destroy()
+                wid[0].destroy()
+                wid[3].destroy()
+
+    if(not check_sch_output()): 
+        but.configure(text='All threats resolved', fg_color='green', state=ctk.DISABLED)
+        return
+    threats_win = ctk.CTk()
+    threats_win.geometry('700x450')
+    widget_list = []
+    scrol_Frame = ctk.CTkScrollableFrame(threats_win, width=670, height=430)
+    scrol_Frame.pack()
+    for pth, stts in results.items():
+        if(not stts):
+            continue
+        pth_Frame = ctk.CTkFrame(scrol_Frame, width=650, height=50)
+        pth_Frame.pack(pady=20)
+        tsk_pth_Label = ctk.CTkLabel(pth_Frame, text= str(pth))
+        tsk_pth_Label.place(relx=0.02, rely=0.5, anchor='w')
+        if stts == 1:
+            status_string = "Malicious"
+            fg_color = 'red'
+            width = len(status_string)*15
+        
+        tsk_duration = ctk.CTkLabel(pth_Frame, text=status_string, fg_color=fg_color, corner_radius=30, width=width)
+        tsk_duration.place(relx=0.55, rely=0.5, anchor='center')
+        dlt_button = ctk.CTkButton(pth_Frame, text= 'Remove Threat', fg_color='red', width=60, command= lambda filepath=str(pth): delete_threat(filepath))
+        dlt_button.place(relx=0.8, rely=0.5, anchor='w')
+        widget_list.append((tsk_pth_Label, tsk_duration, dlt_button, pth_Frame))
+    sch_output = check_sch_output()
+    if(not sch_output):
+        but.configure(text='All threats resolved', fg_color='green', state=ctk.DISABLED)
+        return
+    threats_win.mainloop()
+
+
+def check_sch_output():
+    config_directory = os.path.join(current_Directory, 'Config')
+    allFiles = os.listdir(config_directory)
+    all_lines=[]
+    for file in allFiles:
+        if file.startswith('Output'):
+            output_file_path = os.path.join(config_directory, file)
+            try:
+                with open(output_file_path, 'r') as f:
+                    if not f.read():
+                        return False
+                with open(output_file_path, 'r') as f:
+                    if len(f.readlines()) < 2:
+                        return False
+                with open(output_file_path, 'r') as f:
+                    all_lines+=f.readlines()[1:]
+            except: return False
+    if(not all_lines or all_lines == []):
+        return False
+    
+    all_lines = [re.sub('\n','',i) for i in all_lines]
+
+
+    return_dict = {}
+    for lin in all_lines:
+        file_status_safe = re.findall('Safe$', lin)
+        file_status_Malicious = re.findall('Malicious$', lin)
+        if(file_status_safe): file_status = 'Safe'
+        elif(file_status_Malicious): file_status = 'Malicious'
+        else: return False
+        remains = re.sub('\w+$','', lin)
+        file_path= re.sub('\s+$','', remains)
+        return_dict[str(file_path)] = 1 if file_status == 'Malicious' else 0
+    for k,v in return_dict.items():
+        if(v): return return_dict
+    return False
+
+
+
 root= ctk.CTk()
 root.title('Vigil-Anti')
 root.geometry("800x600")
@@ -434,7 +608,7 @@ scan_file_button = ctk.CTkButton(frame_for_buttons, text='Scan a File!', command
 scan_file_button.grid(row=0, column=1)
 space_padding= ctk.CTkFrame(frame_for_buttons, width=10, height=42)
 space_padding.grid(row=0, column=2)
-scan_folder_button = ctk.CTkButton(frame_for_buttons, text='Scan a Folder!', command=Folder_result_window, width=100)
+scan_folder_button = ctk.CTkButton(frame_for_buttons, text='Scan a Folder!', command=Folder_result_Loading_window, width=100)
 scan_folder_button.grid(row=0, column=3)
 
 
@@ -446,6 +620,29 @@ Configure_button = ctk.CTkButton(frame_for_schedule, text='Schedule Scans', comm
 Configure_button.grid(row=2,column=2)
 
 
+sched_scan_result_button = ctk.CTkButton(root, text='Vigil-Anti found present threats\n   click to resolve', font=ctk.CTkFont(size=16, family='Helvetica', weight='bold'), fg_color='red', corner_radius=30)
+sched_scan_result_button.configure(command=lambda res=sch_output, but=sched_scan_result_button: show_threats(res, but))
+
+
+def place_sched_scan_butt():
+    global already_Placed
+    
+    sch_output = check_sch_output()
+    if(sch_output):
+        if(not already_Placed):
+            sched_scan_result_button = ctk.CTkButton(root, text='Vigil-Anti found present threats\n   click to resolve', font=ctk.CTkFont(size=16, family='Helvetica', weight='bold'), fg_color='red', corner_radius=30)
+            sched_scan_result_button.configure(command=lambda res=sch_output, but=sched_scan_result_button: show_threats(res, but))
+
+            sched_scan_result_button.place(relx=0.217, rely=0.6, anchor='center')
+            already_Placed=True
+    else:
+        try:
+            sched_scan_result_button.destroy()
+        except: pass
+        already_Placed=False
+    root.after(3000, place_sched_scan_butt)
+
+place_sched_scan_butt()
 
 
 root.mainloop()
