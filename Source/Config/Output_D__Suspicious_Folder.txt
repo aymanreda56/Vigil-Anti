@@ -4,7 +4,6 @@ D:\Suspicious_Folder\9.0_AdbeRdr90_en_US.exe                                    
 D:\Suspicious_Folder\application.pdf                                                                Malicious
 D:\Suspicious_Folder\didnt understand (2)                                                           Malicious
 D:\Suspicious_Folder\evil.pdf                                                                       Malicious
-D:\Suspicious_Folder\new refrencing wierd                                                           Malicious
 D:\Suspicious_Folder\no js but it open a sus URL.pdf                                                Safe
 D:\Suspicious_Folder\quiz.pdf                                                                       Malicious
 D:\Suspicious_Folder\quiz_sanitized.pdf                                                             Malicious

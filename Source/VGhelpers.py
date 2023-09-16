@@ -87,7 +87,7 @@ def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=defaul
                # create an object to ToastNotifier class
                n = ToastNotifier()
                n.show_toast("Vigil-Anti", f'File {str(fp)} is found Malicious', duration = 5,
-               icon_path ="https://media.geeksforgeeks.org/wp-content/uploads/geeks.ico")
+               icon_path =os.path.join(parent_directory, 'icons', 'logo_white.ico'))
      return all_results
 
 def Folder_Scan_with_metrics(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False):
@@ -120,7 +120,7 @@ def FileScan(filePath, EXEmodelpath=default_model_path_exe, PDFmodelpath=default
                # create an object to ToastNotifier class
                n = ToastNotifier()
                n.show_toast("Vigil-Anti", f'File {filePath} is found Malicious', duration = 5,
-               icon_path ="https://media.geeksforgeeks.org/wp-content/uploads/geeks.ico")
+               icon_path =os.path.join(parent_directory, 'icons', 'logo_white.ico'))
           return res
      elif(fileType == 2):
           res= VP.ScanFile_pdf(file_path=filePath, modelPath=PDFmodelpath, quiet=quiet, aggressive=aggressive, verbose=verb, output=outfile, no_ascii_art=no_ascii_art)
@@ -130,7 +130,7 @@ def FileScan(filePath, EXEmodelpath=default_model_path_exe, PDFmodelpath=default
                # create an object to ToastNotifier class
                n = ToastNotifier()
                n.show_toast("Vigil-Anti", f'File {filePath} is found Malicious', duration = 5,
-               icon_path ="https://media.geeksforgeeks.org/wp-content/uploads/geeks.ico")
+               icon_path =os.path.join(parent_directory, 'icons', 'logo_white.ico'))
           return res
      elif(fileType == 0):
           print(f"File is not a windows PE nor PDF, wait for other modules for Vigil-Anti to support it")
