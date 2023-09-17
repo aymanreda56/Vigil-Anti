@@ -83,7 +83,17 @@ python Vigil_Anti.py <filepath> <options>
 
 ## Technicalities :wrench:
 ### Scanning PE executables
+Vigil-Anti used LIEF python package to parse executables and gain metadata.
+from those metadata we extract some useful features totalling 310 features!!
+some of the features are Byte entropy, Byte histogram, number of printable static strings, usage of packers, indications of encryption and/or obfuscation, imported modules and DLL names, all the IO operations and windows API function calls and a lot more!
+
+those features are used to train a Random Forest classifier with 100 Decision tree estimators, no limit for the levels of each tree.
+
+finally achieving a test score of 96% on [VirusShare](https://virusshare.com/torrents) Datasets which is considered highly competitive to the other state-of-the-art tools
 ### Scanning PDFs
+There were a lot of papers claiming that it is very enough to decide whether a PDF is malicious or not by only analyzing its metadata.
+So I grabbed a bunch of useful features, most of which are numerical features extracted after parsing the PDF referring to the [PDF structure](https://en.wikipedia.org/wiki/PDF)
+A dataset is then used to train a Random Forest with 300 estimators and achieved 99.7% f1 score which is clearly impressive!!
 
 ## Contributions 🤝🏼
 1. One should issue an issue first, describing the problem he solves, or the new module you are adding
