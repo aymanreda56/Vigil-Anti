@@ -4,10 +4,15 @@
   <img src="https://github.com/aymanreda56/Vigil-Anti/blob/main/icons/gh_logo.png" alt="drawing" width="500" height="679"/>
 </p>
 
-![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/aymanreda56/Vigil-Anti)
-![CII Best Practices Level](https://img.shields.io/cii/level/1?style=plastic)
-![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/aymanreda56/Vigil-Anti?style=plastic)
-![GitHub language count](https://img.shields.io/github/languages/count/aymanreda56/Vigil-Anti)
+
+<div align="center">
+
+  <a href="">![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/aymanreda56/Vigil-Anti)</a>
+  <a href="">![CII Best Practices Level](https://img.shields.io/cii/level/1?style=plastic)</a>
+  <a href="">![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/aymanreda56/Vigil-Anti?style=plastic)</a>
+  <a href="">![GitHub language count](https://img.shields.io/github/languages/count/aymanreda56/Vigil-Anti)</a>
+
+</div>
 
 A free open-source antivirus (antimalware to be more generic) for windows PE executables and office documents (PDF, DOCx), utilizing Machine Learning approaches as well as rule based heuristics to offer state-of-the art results and ensuring maximal security.
 with a Very friendly GUI to ensure all different users have a nice experience. Get your copy from [releases](https://github.com/aymanreda56/Vigil-Anti/releases/)!
