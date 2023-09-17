@@ -1,7 +1,7 @@
 <h1 align="center">Vigil-Anti</h1>
 <h2 align="center">Your pocket Antivirus</h2>
 <p align="center">
-  <img src="https://github.com/aymanreda56/Vigil-Anti/assets/58632281/79a141c7-6e1f-4cf7-838f-9793abdbdb99" alt="drawing" width="500" height="679"/>
+  <img src="https://github.com/aymanreda56/Vigil-Anti/blob/main/icons/gh_logo.png" alt="drawing" width="500" height="679"/>
 </p>
 
 
@@ -32,18 +32,24 @@ with a Very friendly GUI to ensure all different users have a nice experience. G
 * Download the binaries from the [release page](https://github.com/aymanreda56/Vigil-Anti/releases/)
 * Just double click on `Vigil-Anti.bat` to setup everything and run the GUI
 * To Scan a suspicious file, just click `Scan File`
-  
-https://github.com/aymanreda56/Vigil-Anti/assets/58632281/1117a9d8-c2bc-44e0-a873-0ea030678611
+
+
+https://github.com/aymanreda56/Vigil-Anti/assets/58632281/5e1972cd-07a5-4e11-b696-6993d1a867e5
+
+
 
 * To scan a suspicious folder, just click `Scan Folder`, then wait for Vigil-Anti to finish scanning and delete the threats from the report menu
 
-https://github.com/aymanreda56/Vigil-Anti/assets/58632281/07189bf5-eb8e-49cd-aeb2-dab3dad43fd8
+
+https://github.com/aymanreda56/Vigil-Anti/assets/58632281/05df4f04-33b3-4824-87c3-218b44089b5d
+
+
 
 * To Schedule or unschedule automated scans, just click `Configure Scans`, then choose the file or folder you want to scan automatically, then specify the intended interval either every n minutes or every n days and click `Apply` !
   
 
+https://github.com/aymanreda56/Vigil-Anti/assets/58632281/e615628b-5bc3-4fa5-9736-04a68de9990c
 
-https://github.com/aymanreda56/Vigil-Anti/assets/58632281/33ff03ee-4a09-4130-bfd1-d0a60324489b
 
 
 
@@ -72,7 +78,7 @@ python Vigil_Anti.py <filepath> <options>
 
 ### For fellow developers (Library) 👨🏻‍🎓
 <p align="center">
-  <img src="https://github.com/aymanreda56/Vigil-Anti/assets/58632281/70db44eb-10d2-4732-8d41-cb9745a77068" alt="drawing"/>
+  <img src="https://github.com/aymanreda56/Vigil-Anti/blob/main/icons/library.png" alt="drawing"/>
 </p>
 
 
