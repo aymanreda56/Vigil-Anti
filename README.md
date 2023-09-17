@@ -6,7 +6,7 @@
 
 
 A free open-source antivirus (antimalware to be more generic) for windows PE executables and office documents (PDF, DOCx), utilizing Machine Learning approaches as well as rule based heuristics to offer state-of-the art results and ensuring maximal security.
-with a Very friendly GUI to ensure all different users have a nice experience
+with a Very friendly GUI to ensure all different users have a nice experience. Get your copy from [releases](https://github.com/aymanreda56/Vigil-Anti/releases/)!
 
 ## Offered Features :rocket:
 * State-of-the art Precision and recall
@@ -29,6 +29,7 @@ with a Very friendly GUI to ensure all different users have a nice experience
 
 ## How to Run?
 ### For your Granny (GUI) :older_woman:
+* Download the binaries from the [release page](https://github.com/aymanreda56/Vigil-Anti/releases/)
 * Just double click on `Vigil-Anti.bat` to setup everything and run the GUI
 * To Scan a suspicious file, just click `Scan File`
   
