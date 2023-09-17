@@ -8,7 +8,7 @@
 A free open-source antivirus (antimalware to be more generic) for windows PE executables and office documents (PDF, DOCx), utilizing Machine Learning approaches as well as rule based heuristics to offer state-of-the art results and ensuring maximal security.
 with a Very friendly GUI to ensure all different users have a nice experience
 
-## Offered Features
+## Offered Features :rocket:
 * State-of-the art Precision and recall
 * Maximal Security
 * Real-time monitoring
@@ -23,12 +23,12 @@ with a Very friendly GUI to ensure all different users have a nice experience
 * Ready-to-use python libraries, just import and use the functions, very easy to integrate to other projects (eg: fellow antiviruses)
 * No Database used, nor requiring internet access, hence very minimal size and lightweight activity.
 
-## Requirements
+## Requirements :eyes:
 * python version > 3.7
 * Windows [Vista, 7, 8, 10, 11] (required for the GUI only, CLI supports multiplatforms)
 
 ## How to Run?
-### For your Granny (GUI)
+### For your Granny (GUI) :older_woman:
 * Just double click on `Vigil-Anti.bat` to setup everything and run the GUI
 * To Scan a suspicious file, just click "Scan File"
   
@@ -46,7 +46,7 @@ https://github.com/aymanreda56/Vigil-Anti/assets/58632281/33ff03ee-4a09-4130-bfd
 
 
 
-### For fellow developers (CLI)
+### For fellow developers (CLI) :computer:
 | Shorthand  | Long  | Usage  |
 |---|---|---|
 | path  | __  | The target path you want to scan, whether it is a file or a folder (in this case, specify -f)  |
@@ -63,26 +63,32 @@ https://github.com/aymanreda56/Vigil-Anti/assets/58632281/33ff03ee-4a09-4130-bfd
 | -c  | --clean-output  | Display very minimal output at the end of the output file (you might opt for this besides --output)  |
 | -N  | --notify  | to enable notifications (default= False)  |
 
-### For fellow developers (Library)
+### For fellow developers (Library) 👨🏻‍🎓
 <p align="center">
   <img src="https://github.com/aymanreda56/Vigil-Anti/assets/58632281/70db44eb-10d2-4732-8d41-cb9745a77068" alt="drawing"/>
 </p>
 
 
-## Use case scenarios
+## Use case scenarios :clapper:
 * A company recruiter recieving hundreds of CVs, one of which can be malicious. the recruiter should set Vigil-Anti to scan all those PDFs
 * My little brother likes to download pirated games which contain some crypto miners or perhaps a malicious ransomware, Vigil-Anti can help him out before it is too late!
 * Some medical devices host Windows OS on them, which are very vulnerable to outsider malwares causing the OS to fail, which in some cases may be fatal, so SoC analysts might just run Vigil-Anti to monitor the sensitive software infrastructure.
 * Your jumpy uncle always complains about his pc being so slow, blaming it on present malwares. You can just help him out with Vigil-Anti and save the day! your uncle will see you as a hero :)
 
-## Technicalities
+## Technicalities :wrench:
 ### Scanning PE executables
 ### Scanning PDFs
 
-## Contributions
+## Contributions 🤝🏼
 
-## Future plans (Todos)
+## Future plans (Todos) :pray:
+* Support Web formats (HTML, css)
+* Support source code malwares (not binaries)
+* Support interpretted language malwares, specifically JS ones that gets loaded at client-side
+* Photo scanner
+* More real-time UX: scan any file just after the user clicks on the file, but hold the file from executing until the scan is finished
 
-## Donations
-
+## Donations :money_with_wings:
+Welp this is a Free Open-Source Software, I don't get paid for this 🤷🏻‍♂️; this project is 100% out of sheer motivation and having fun.
+if you want to help, just leave a kind review or hope that I don't get drafted for military services 🥺.
 
