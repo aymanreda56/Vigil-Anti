@@ -30,15 +30,15 @@ with a Very friendly GUI to ensure all different users have a nice experience
 ## How to Run?
 ### For your Granny (GUI) :older_woman:
 * Just double click on `Vigil-Anti.bat` to setup everything and run the GUI
-* To Scan a suspicious file, just click "Scan File"
+* To Scan a suspicious file, just click `Scan File`
   
 https://github.com/aymanreda56/Vigil-Anti/assets/58632281/1117a9d8-c2bc-44e0-a873-0ea030678611
 
-* To scan a suspicious folder, just click "Scan Folder", then wait for Vigil-Anti to finish scanning and delete the threats from the report menu
+* To scan a suspicious folder, just click `Scan Folder`, then wait for Vigil-Anti to finish scanning and delete the threats from the report menu
 
 https://github.com/aymanreda56/Vigil-Anti/assets/58632281/07189bf5-eb8e-49cd-aeb2-dab3dad43fd8
 
-* To Schedule or unschedule automated scans, just click "Configure Scans", then choose the file or folder you want to scan automatically, then specify the intended interval either every n minutes or every n days and click "Apply" !
+* To Schedule or unschedule automated scans, just click `Configure Scans`, then choose the file or folder you want to scan automatically, then specify the intended interval either every n minutes or every n days and click `Apply` !
   
 
 
@@ -47,6 +47,12 @@ https://github.com/aymanreda56/Vigil-Anti/assets/58632281/33ff03ee-4a09-4130-bfd
 
 
 ### For fellow developers (CLI) :computer:
+You run the CLI like this:
+```
+python Vigil_Anti.py <filepath> <options>
+```
+#### Available options
+
 | Shorthand  | Long  | Usage  |
 |---|---|---|
 | path  | __  | The target path you want to scan, whether it is a file or a folder (in this case, specify -f)  |
@@ -80,6 +86,10 @@ https://github.com/aymanreda56/Vigil-Anti/assets/58632281/33ff03ee-4a09-4130-bfd
 ### Scanning PDFs
 
 ## Contributions 🤝🏼
+1. One should issue an issue first, describing the problem he solves, or the new module you are adding
+2. Then just PR
+3. I will review it and try to integrate your module
+4. If you are implementing a completely new module, you don't have to integrate it, just PR and I will work it out in the integrated code
 
 ## Future plans (Todos) :pray:
 * Support Web formats (HTML, css)
