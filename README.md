@@ -1,5 +1,5 @@
-# Vigil-Anti
-## Your pocket Antivirus
+<h1 align="center">Vigil-Anti</h1>
+<h2 align="center">Your pocket Antivirus</h2>
 <p align="center">
   <img src="https://github.com/aymanreda56/Vigil-Anti/assets/58632281/79a141c7-6e1f-4cf7-838f-9793abdbdb99" alt="drawing" width="500" height="679"/>
 </p>
