@@ -85,6 +85,8 @@ python Vigil_Anti.py <filepath> <options>
 | -c  | --clean-output  | Display very minimal output at the end of the output file (you might opt for this besides --output)  |
 | -N  | --notify  | to enable notifications (default= False)  |
 
+Also you can watch this short demo on the cool CLI from [here](https://youtu.be/TOcYXyd2R94?si=Uhsy7Ab0vqh1Tzzl)
+
 ### For fellow developers (Library) 👨🏻‍🎓
 <p align="center">
   <img src="https://github.com/aymanreda56/Vigil-Anti/blob/main/icons/library.png" alt="drawing"/>
