@@ -1,0 +1,12 @@
+ConfigParser
+customtkinter
+lief
+matplotlib
+numpy
+pandas
+Pillow
+pywin32
+scikit_learn
+tqdm
+win10toast
+PyExifTool

@@ -10,6 +10,8 @@ sys.path.append('Vigi_PDF')
 import VGhelpers as VA
 from PIL import Image, ImageTk
 
+import customtkinter as ctk
+
 current_Directory = os.path.split(os.path.realpath(__file__))[0]
 parent_Directory = os.path.split(current_Directory)[0]
 with open(os.path.join(current_Directory, 'Vigi_EXE', 'models', 'secret_tips.pkl'), 'rb') as f:
@@ -41,7 +43,6 @@ class Indigo_Preset:
 
 
 
-import customtkinter as ctk
 
 global file_path, folder_path
 already_Placed = False
@@ -175,6 +176,7 @@ def Folder_result_Loading_window():
     fold_win.geometry('%dx%d+%d+%d' % (w, h, x, y))
     fold_win.overrideredirect(True)
     fold_win.resizable(False,False)
+    fold_win.title("Scanning...")
     fold_win.configure(fg_color=Indigo_Preset.window_color)
     fold_win.iconbitmap(os.path.join(parent_Directory, 'icons', 'logo_white.ico'))
     
@@ -238,18 +240,25 @@ def Folder_result_window(results:dict):
 
 
     results = cleanse_n_sort(results)
+    max_len = 0
+    for i,_ in results:
+        max_len = max(max_len, len(str(i)))
     fold_res_window = ctk.CTk()
+    fold_res_window.title('Scan Results')
     fold_res_window.configure(fg_color=Indigo_Preset.window_color)
+    fold_res_window.iconbitmap(os.path.join(parent_Directory, 'icons', 'logo_white.ico'))
     w, h = 800,450
+    if(max_len>50):
+        w += max_len*1.51
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
     fold_res_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
     fold_res_window.resizable(False, False)
     widget_list = []
-    scrollable_frame = ctk.CTkScrollableFrame(fold_res_window, width=770, height=430, fg_color=Indigo_Preset.window_color)
+    scrollable_frame = ctk.CTkScrollableFrame(fold_res_window, width=w-30, height=430, fg_color=Indigo_Preset.window_color)
     scrollable_frame.pack()
     for path, status in results:
-        task_frame = ctk.CTkFrame(scrollable_frame, width=750, height=50, bg_color=Indigo_Preset.window_color, fg_color=Indigo_Preset.frame_color)
+        task_frame = ctk.CTkFrame(scrollable_frame, width=w-50, height=50, bg_color=Indigo_Preset.window_color, fg_color=Indigo_Preset.frame_color)
         task_frame.pack(pady=5)
         task_path_label = ctk.CTkLabel(task_frame, text= str(path), font=ctk.CTkFont(size=15, family='Helvetica', weight='normal'))
         task_path_label.place(relx=0.02, rely=0.5, anchor='w')
@@ -323,17 +332,24 @@ def unschedule_window(but):
     
 
     unsch_window = ctk.CTk()
+    max_len=0
+    scheduled_tasks=parse_schedule()
+    for i in scheduled_tasks:
+        max_len=max(max_len, len(i))
+    unsch_window.title("Unschedule Automated Scans")
     unsch_window.configure(fg_color=Indigo_Preset.window_color)
+    unsch_window.iconbitmap(os.path.join(parent_Directory, 'icons', 'logo_white.ico'))
     unsch_window.resizable(False, False)
     w, h = 600, 150
+    if(max_len>40):
+        w+= max_len*1.51
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
     unsch_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
-    scheduled_tasks=parse_schedule()
     widget_list = []
     if(type(scheduled_tasks) != list): return
     for index, task in enumerate(scheduled_tasks):
-        task_frame = ctk.CTkFrame(unsch_window, width=570, height=50, fg_color=Indigo_Preset.frame_color, bg_color=Indigo_Preset.window_color)
+        task_frame = ctk.CTkFrame(unsch_window, width=w-30, height=50, fg_color=Indigo_Preset.frame_color, bg_color=Indigo_Preset.window_color)
         task_frame.pack(pady=5)
         task_path_label = ctk.CTkLabel(task_frame, text= task[0], fg_color=Indigo_Preset.frame_color)
         task_path_label.place(relx=0.05, rely=0.5, anchor='w')
@@ -421,17 +437,19 @@ def ConfigureWindow():
         
 
     conf_window = ctk.CTk()
-    conf_window.title('Configure Schedules')
+    conf_window.iconbitmap(os.path.join(parent_Directory, 'icons', 'logo_white.ico'))
     w, h = 550,400
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
     conf_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
     conf_window.resizable(False,False)
+    conf_window.title("Schedule Scans")
     conf_window.configure(fg_color=Indigo_Preset.window_color)
     select_file = ctk.CTkButton(conf_window, text='Select Target File', command=getFilePath, corner_radius=9, font=ctk.CTkFont(size=20, family='Helvetica', weight='bold'), height=35, fg_color=Indigo_Preset.button_color, bg_color=Indigo_Preset.window_color, hover_color=Indigo_Preset.button_hover_color)
     select_file.place(relx=0.3, rely=0.2, anchor='center')
     select_folder = ctk.CTkButton(conf_window, text='Select Target Folder', command=getFolderPath, corner_radius=9, font=ctk.CTkFont(size=20, family='Helvetica', weight='bold'), height=35, fg_color=Indigo_Preset.button_color, bg_color=Indigo_Preset.window_color, hover_color=Indigo_Preset.button_hover_color)
     select_folder.place(relx=0.7, rely=0.2, anchor='center')
+
 
     slider_frame= ctk.CTkFrame(conf_window, width=230, height=130, corner_radius=20, fg_color=Indigo_Preset.frame_color)
     slider_frame.place(relx=0.5, rely=0.65, anchor='center')
@@ -547,17 +565,26 @@ def show_threats(results:dict, but:ctk.CTkButton):
         but.configure(text='All threats resolved', fg_color='green', state=ctk.DISABLED)
         return
     threats_win = ctk.CTk()
+    max_len=0
+    for k in results.keys():
+        max_len=max(max_len, len(str(k)))
     w, h = 800,450
+    if(max_len>50):
+        w+=max_len*1.51
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
     threats_win.geometry('%dx%d+%d+%d' % (w, h, x, y))
+    threats_win.title("Detected Threats")
+    threats_win.resizable=(False,False)
+    threats_win.iconbitmap(os.path.join(parent_Directory, 'icons', 'logo_white.ico'))
+    
     widget_list = []
-    scrol_Frame = ctk.CTkScrollableFrame(threats_win, width=770, height=430, fg_color=Indigo_Preset.window_color)
+    scrol_Frame = ctk.CTkScrollableFrame(threats_win, width=w-30, height=430, fg_color=Indigo_Preset.window_color)
     scrol_Frame.pack()
     for pth, stts in results.items():
         if(not stts):
             continue
-        pth_Frame = ctk.CTkFrame(scrol_Frame, width=750, height=50, bg_color=Indigo_Preset.window_color, fg_color=Indigo_Preset.frame_color)
+        pth_Frame = ctk.CTkFrame(scrol_Frame, width=w-50, height=50, bg_color=Indigo_Preset.window_color, fg_color=Indigo_Preset.frame_color)
         pth_Frame.pack(pady=5)
         tsk_pth_Label = ctk.CTkLabel(pth_Frame, text= str(pth), font=ctk.CTkFont(size=15, family='Helvetica', weight='normal'))
         tsk_pth_Label.place(relx=0.02, rely=0.5, anchor='w')

@@ -1,0 +1,2 @@
+cd /d "D:\ClassWork\anti_virus\Vigil-Anti\Source"
+python "Vigil_Anti.py" "D:/Suspicious_Folder/Top Secret/Top Top Secret" -q -N -c -f -o "D:\ClassWork\anti_virus\Vigil-Anti\Source\Config\Output_D__Suspicious_Folder_Top_Secret_Top_Top_Secret.txt"

@@ -70,7 +70,7 @@ def checkFileType(file_path):
 
 def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False, notify=False):
      folder_path = pathlib.Path(folder)
-     allFile_paths= list(folder_path.glob('*'))
+     allFile_paths= list(folder_path.rglob('*'))
      all_results = {}
      for fp in allFile_paths:
           FileType = checkFileType(file_path=fp)
@@ -92,7 +92,7 @@ def Folder_Scan(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=defaul
 
 def Folder_Scan_with_metrics(folder, EXEmodelpath=default_model_path_exe, PDFmodelpath=default_model_path_pdf, quiet=False, aggressive=False, verb=False, outfile='', no_ascii_art=False):
      folder_path = pathlib.Path(folder)
-     allFile_paths= list(folder_path.glob('*'))
+     allFile_paths= list(folder_path.rglob('*'))
      all_results = {}
      yield len(allFile_paths)
      for i, fp in enumerate(allFile_paths):

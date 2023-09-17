@@ -1,11 +1,8 @@
                Vigil_Anti     By    Ayman Reda
 D:\Suspicious_Folder\8.0_AdbeRdr80_en_US.exe                                                        Safe
 D:\Suspicious_Folder\9.0_AdbeRdr90_en_US.exe                                                        Safe
-D:\Suspicious_Folder\application.pdf                                                                Malicious
-D:\Suspicious_Folder\didnt understand (2)                                                           Malicious
-D:\Suspicious_Folder\evil.pdf                                                                       Malicious
 D:\Suspicious_Folder\no js but it open a sus URL.pdf                                                Safe
-D:\Suspicious_Folder\quiz.pdf                                                                       Malicious
-D:\Suspicious_Folder\quiz_sanitized.pdf                                                             Malicious
 D:\Suspicious_Folder\setup.exe                                                                      Safe
-D:\Suspicious_Folder\wierd a long js talk                                                           Malicious
+D:\Suspicious_Folder\Top Secret\398                                                                 Safe
+D:\Suspicious_Folder\Top Secret\415                                                                 Safe
+D:\Suspicious_Folder\Top Secret\467                                                                 Safe
