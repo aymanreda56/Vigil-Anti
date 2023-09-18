@@ -9,7 +9,9 @@
 
   <a href="">![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/aymanreda56/Vigil-Anti)</a>
   <a href="">![CII Best Practices Level](https://img.shields.io/cii/level/1?style=plastic)</a>
+  <a href="">![](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white)</a>
   <a href="">![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/aymanreda56/Vigil-Anti?style=plastic)</a>
+  <a href="">![https://www.linkedin.com/feed/update/urn:li:activity:7109374017064566784/](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)</a>
   <a href="">![GitHub language count](https://img.shields.io/github/languages/count/aymanreda56/Vigil-Anti)</a>
 
 </div>
